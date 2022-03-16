@@ -70,14 +70,13 @@ def calcPSD(xFFT: np.array, yFFT: np.array, fs: float, window: str) -> np.array:
 def merge(data):
     dataset = xr.DataArray(
         np.array(data, dtype=object),
-        dims = ("y", "x"),
+        dims = ("timeblock", "value"),
         coords = {
-            "x": (np.arange(1, len(data[0])+1)).tolist(),
-            "y": (np.arange(1, len(data)+1)).tolist(),
+            "value": (np.arange(0, len(data[0]))).tolist(),
+            "timeblock": (np.arange(0, len(data))).tolist(),
         }
     )
     return dataset
-
 
 
 
@@ -91,9 +90,15 @@ def getPSDs(filename: str) -> dict:
     PSDxs = []
     PSDys = []
     PSDzs = []
+    PSDxs_imag = []
+    PSDys_imag = []
+    PSDzs_imag = []
     CSDxys = []
     CSDzxs = []
     CSDzys = []
+    CSDxys_imag = []
+    CSDzxs_imag = []
+    CSDzys_imag = []
     # process all blocks of time
     for i in range(len(timebounds)):
         # grab the upper and lower time window for this timeblock
@@ -128,38 +133,46 @@ def getPSDs(filename: str) -> dict:
         PSDy = calcPSD(FFT["y"], FFT["y"], frequency, "boxcar")
         PSDz = calcPSD(FFT["z"], FFT["z"], frequency, "boxcar")
 
-        PSDxs.append(PSDx)
-        PSDys.append(PSDy)    
-        PSDzs.append(PSDz)
-
-        # PSDxs.append(xr.Dataset({'real': PSDx.real, 'imag': PSDx.imag}))
-        # PSDys.append(xr.Dataset({'real': PSDy.real, 'imag': PSDy.imag}))    
-        # PSDzs.append(xr.Dataset({'real': PSDz.real, 'imag': PSDz.imag}))  
+        PSDxs.append(PSDx.real)
+        PSDys.append(PSDy.real)   
+        PSDzs.append(PSDz.real)
+        PSDxs_imag.append(PSDx.imag)
+        PSDys_imag.append(PSDy.imag)   
+        PSDzs_imag.append(PSDz.imag)
+        
         
         CSDxy = calcPSD(FFT["x"], FFT["y"], frequency, "boxcar")
         CSDzx = calcPSD(FFT["z"], FFT["x"], frequency, "boxcar")
         CSDzy = calcPSD(FFT["z"], FFT["y"], frequency, "boxcar")
 
-        CSDxys.append(CSDxy)
-        CSDzxs.append(CSDzx)
-        CSDzys.append(CSDzy)
-
-        # CSDxys.append(xr.Dataset({'real': CSDxy.real, 'imag': CSDxy.imag}))
-        # CSDzxs.append(xr.Dataset({'real': CSDzx.real, 'imag': CSDzx.imag}))
-        # CSDzys.append(xr.Dataset({'real': CSDzy.real, 'imag': CSDzy.imag}))
+        
+        CSDxys.append(CSDxy.real)
+        CSDzxs.append(CSDzx.real)
+        CSDzys.append(CSDzy.real)
+        CSDxys_imag.append(CSDxy.imag)
+        CSDzxs_imag.append(CSDzx.imag)
+        CSDzys_imag.append(CSDzy.imag)
     
     
-    PSDs = {
+    PSDss = xr.Dataset({
         "x": merge(PSDxs),
         "y": merge(PSDys),
-        "z": merge(PSDzs)
-    }
+        "z": merge(PSDzs),
+        "x_imag": merge(PSDxs_imag),
+        "y_imag": merge(PSDys_imag),
+        "z_imag": merge(PSDzs_imag)
+    })
+    
 
-    CSDs = {
+    CSDss = xr.Dataset({
         "xy": merge(CSDxys),
         "zx": merge(CSDzxs),
-        "zy": merge(CSDzys)
-    }
+        "zy": merge(CSDzys),
+        "xy_imag": merge(CSDxys_imag),
+        "zx_imag": merge(CSDzxs_imag),
+        "zy_imag": merge(CSDzys_imag)
+    })
 
     
-    return CSDs, PSDs
+   
+    return PSDss, CSDss
