@@ -19,18 +19,14 @@ def process(filename: str, args: ArgumentParser) -> None:
     nc4.Dataset(output_dir, 'w', format='NETCDF4')
 
     # calculate CSDs and PSDs for each time block 
-    CSDs, PSDs = processdata.getPSDs(filename)
-    
-    
- 
-    
-    # where I left off
+    PSDs, CSDs = processdata.getPSDs(filename)
 
     # write PSDs and CSDs to output file in PSD and CSD group
     xr.Dataset(CSDs).to_netcdf(output_dir, mode="w", group="PSD")
     xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="CSD")
     
-        
+    print("PSD\n", PSDs)
+    print("CSD\n", CSDs)
 
 
 
