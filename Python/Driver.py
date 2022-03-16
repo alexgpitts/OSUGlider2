@@ -26,8 +26,7 @@ def process(filename: str, args: ArgumentParser) -> None:
     xr.Dataset(CSDs).to_netcdf(output_dir, mode="w", group="PSD")
     xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="CSD")
     
-    print("PSD\n", PSDs)
-    print("CSD\n", CSDs)
+   
 
     # STEP 2 Calculate Welch PSD and CSD
 

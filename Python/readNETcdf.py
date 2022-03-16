@@ -10,9 +10,10 @@ def process(filename: str, args: ArgumentParser) -> None:
     PSD_xr = xr.open_dataset(filename, group="PSD")
     CSD_xr = xr.open_dataset(filename, group="CSD")
 
-    print(PSD_xr)
-    print(CSD_xr)
- 
+      
+    print("PSD\n", PSD_xr)
+    print("CSD\n", CSD_xr)
+
 
 
 def main(raw_args=None):
