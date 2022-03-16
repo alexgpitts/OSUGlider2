@@ -18,6 +18,7 @@ def process(filename: str, args: ArgumentParser) -> None:
     output_dir = os.path.join(folder_name, output_name)
     nc4.Dataset(output_dir, 'w', format='NETCDF4')
 
+    # STEP 1 Calculate PSD and CSD
     # calculate CSDs and PSDs for each time block 
     PSDs, CSDs = processdata.getPSDs(filename)
 
@@ -27,6 +28,15 @@ def process(filename: str, args: ArgumentParser) -> None:
     
     print("PSD\n", PSDs)
     print("CSD\n", CSDs)
+
+    # STEP 2 Calculate Welch PSD and CSD
+
+
+    # STEP 3 Calculate Banded PSD and CSD
+
+    # STEP 4 Wave calculations normal
+    # STEP 5 Wave calculations Welch
+    # STEP 6 Wave calculations banded
 
 
 
