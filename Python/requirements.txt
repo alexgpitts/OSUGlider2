@@ -1,0 +1,7 @@
+I still need to format this correctly. I just jotted down a list of stuff we need
+
+pip install numpy
+pip install pandas 
+pip install matplotlib
+pip install xarray 
+pip install netCDF4 
