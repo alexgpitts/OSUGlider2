@@ -81,12 +81,15 @@ def merge(data):
 
 
 def getPSDs(filename: str) -> dict:
+    """Calculates the PSD without banding or welch given a filename containing xyz data"""
     # get all data from .nc file
     data = gd.Data(filename)
 
     frequency = data["Meta"]["frequency"]
     time = data["XYZ"]["t"]
     timebounds = data["Wave"]["Timebounds"]
+
+    # arrays for storing PSDs and CSDs real and imaginary numbers
     PSDxs = []
     PSDys = []
     PSDzs = []
@@ -99,6 +102,7 @@ def getPSDs(filename: str) -> dict:
     CSDxys_imag = []
     CSDzxs_imag = []
     CSDzys_imag = []
+
     # process all blocks of time
     for i in range(len(timebounds)):
         # grab the upper and lower time window for this timeblock
@@ -133,6 +137,7 @@ def getPSDs(filename: str) -> dict:
         PSDy = calcPSD(FFT["y"], FFT["y"], frequency, "boxcar")
         PSDz = calcPSD(FFT["z"], FFT["z"], frequency, "boxcar")
 
+        # append real and imaginary numbers
         PSDxs.append(PSDx.real)
         PSDys.append(PSDy.real)   
         PSDzs.append(PSDz.real)
@@ -140,12 +145,12 @@ def getPSDs(filename: str) -> dict:
         PSDys_imag.append(PSDy.imag)   
         PSDzs_imag.append(PSDz.imag)
         
-        
+        # Calculate CSD of data from normal FFT
         CSDxy = calcPSD(FFT["x"], FFT["y"], frequency, "boxcar")
         CSDzx = calcPSD(FFT["z"], FFT["x"], frequency, "boxcar")
         CSDzy = calcPSD(FFT["z"], FFT["y"], frequency, "boxcar")
 
-        
+        # append real and imaginary numbers
         CSDxys.append(CSDxy.real)
         CSDzxs.append(CSDzx.real)
         CSDzys.append(CSDzy.real)
@@ -153,7 +158,7 @@ def getPSDs(filename: str) -> dict:
         CSDzxs_imag.append(CSDzx.imag)
         CSDzys_imag.append(CSDzy.imag)
     
-    
+    # merge all PSD lists into a dataset
     PSDss = xr.Dataset({
         "x": merge(PSDxs),
         "y": merge(PSDys),
@@ -163,7 +168,7 @@ def getPSDs(filename: str) -> dict:
         "z_imag": merge(PSDzs_imag)
     })
     
-
+    # merge all CSD lists into a dataset    
     CSDss = xr.Dataset({
         "xy": merge(CSDxys),
         "zx": merge(CSDzxs),
@@ -173,6 +178,30 @@ def getPSDs(filename: str) -> dict:
         "zy_imag": merge(CSDzys_imag)
     })
 
-    
-   
     return PSDss, CSDss
+
+def getWelchPSDs(filename: str) -> dict:
+    """(incomplete) Calculates the PSD with the Welch method given a filename containing xyz data"""
+    # get all data from .nc file
+    data = gd.Data(filename)
+
+    frequency = data["Meta"]["frequency"]
+    time = data["XYZ"]["t"]
+    timebounds = data["Wave"]["Timebounds"]
+   
+    # process all blocks of time
+    for i in range(len(timebounds)):
+        exit(0)
+
+def getBandPSDs(filename: str) -> dict:
+    """(incomplete) Calculates the PSD with a banding method given a filename containing xyz data"""
+    # get all data from .nc file
+    data = gd.Data(filename)
+
+    frequency = data["Meta"]["frequency"]
+    time = data["XYZ"]["t"]
+    timebounds = data["Wave"]["Timebounds"]
+   
+    # process all blocks of time
+    for i in range(len(timebounds)):
+        exit(0)
