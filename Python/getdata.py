@@ -1,3 +1,9 @@
+"""
+This file contains all the code for opening our NetCDF file and storing the data in dictionaries
+
+Authors: 
+"""
+
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
@@ -5,8 +11,8 @@ import pandas as pd
 
 def calcAcceleration(x: np.array, fs: float) -> np.array:
     """converts displacement data to acceleration.
-    We need acceleration data because that is
-    what we will record from the STM"""
+    We will not use this in final implementation because 
+    the xyz data will already be in acceleration from the glider"""
     dx2 = np.zeros(x.shape)
     dx2[2:] = np.diff(np.diff(x))
     dx2[0:2] = dx2[2]
@@ -16,8 +22,7 @@ def calcAcceleration(x: np.array, fs: float) -> np.array:
 def Data(filename) -> dict:
     """Master data reading function. Reads the .nc file from CDIP.
     The data is stored in dictionary (data), which contains many dictionaries 
-    to hold information. Examples include: acceleration data, frequency bounds, 
-    expected values calculated by CDIP, etc."""
+    to hold information. Examples include: acceleration data, frequency bounds, etc."""
    
 
     meta_xr = xr.open_dataset(filename, group="Meta")  # For water depth

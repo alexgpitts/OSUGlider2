@@ -1,3 +1,9 @@
+"""
+This file containes all the calculations for calculating PSDs, CSDs, directional values, and non directional values
+
+Authors: 
+"""
+
 from asyncio.windows_events import NULL
 import numpy as np
 import xarray as xr
