@@ -1,14 +1,12 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import getdata as gd
 from argparse import ArgumentParser
 import xarray as xr
 import netCDF4 as nc4
 import os
-
-
-import processdata as processdata
-from processdata import (getWelchPSDs, calcWelch)
+import processdata as pr
 
 
 def process(filename: str, args: ArgumentParser) -> None:
@@ -18,36 +16,139 @@ def process(filename: str, args: ArgumentParser) -> None:
     output_dir = os.path.join(folder_name, output_name)
     nc4.Dataset(output_dir, 'w', format='NETCDF4')
 
-    # STEP 1 Calculate PSD and CSD
-    # calculate CSDs and PSDs for each time block 
-    PSDs, CSDs = processdata.getPSDs(filename)
+    data = gd.Data(filename)
+    
+    time = data["XYZ"]["t"]
+    timebounds = data["Wave"]["Timebounds"]
 
-    # write PSDs and CSDs to output file in PSD and CSD group
-    xr.Dataset(CSDs).to_netcdf(output_dir, mode="w", group="CSD")
-    xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="PSD")
+    # lists of upper, lower, and midpoint frequencies for banding
+    freq_bounds = data["Wave"]["FreqBounds"]
+    freq_lower = data["Freq"]["lower"]
+    freq_upper = data["Freq"]["upper"]
+    freq_midpoints = data["Freq"]["joint"].mean(axis=1)
 
-    # STEP 2 Calculate Welch PSD and CSD
+    # lists to store PSDs
+    PSDs = []       #normal PSD
+    wPSDs = []      #Welch method PSD
+    bPSDs = []      #banding methods PSDs
+    wCalcs = []     #welch method calculations
+    bCalcs = []     #banding method calculations
 
-    PSDs, CSDs = processdata.getWelchPSDs(filename)
+    for i in range(len(timebounds)):
+            
+        time_lower = data["Wave"]["time_lower"].to_numpy()[i]
+        time_upper = data["Wave"]["time_upper"].to_numpy()[i]
 
-    xr.Dataset(CSDs).to_netcdf(output_dir, mode="a", group="wCSD")
-    xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="wPSD")
+        # bit mask so as to select only within the bounds of one lower:upper range pair
+        select = np.logical_and(
+            time >= time_lower,
+            time <= time_upper
+        )
+        
+        averaging_window = 2
 
-    # STEP 3 Calculate Banded PSD and CSD
+        # select xyz data from block
+        acc = {
+            # x is northwards
+            "x": pr.Rolling_mean(data["XYZ"]["x"][select], averaging_window),
+            # y is eastwards
+            "y": pr.Rolling_mean(data["XYZ"]["y"][select], averaging_window),
+            # z is upwards
+            "z": pr.Rolling_mean(data["XYZ"]["z"][select], averaging_window)
+        }
 
-    PSDs, CSDs = processdata.getBandPSDs(filename)
-    xr.Dataset(CSDs).to_netcdf(output_dir, mode="a", group="bCSD")
-    xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="bPSD")
+        ################################# 
+        # PSDs and CSDs
+        #################################
 
-    #xr.Dataset(CSDs).to_netcdf(output_dir, mode="a", group="BandedCSD")
-    #xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="BandedPSD")
+        # preform FFT on block
+        FFT = {
+            "x": np.fft.rfft(acc["x"], n=acc["z"].size),  # northwards
+            "y": np.fft.rfft(acc["y"], n=acc["z"].size),  # eastwards
+            "z": np.fft.rfft(acc["z"], n=acc["z"].size),  # upwards
+        }
+
+        window_type = "hann"
+        # preform FFT on block using welch mothod
+        wFFT = {
+            "x": pr.wfft(acc["x"], 2**8, window_type),
+            "y": pr.wfft(acc["y"], 2**8, window_type),
+            "z": pr.wfft(acc["z"], 2**8, window_type),
+        }
+
+        # Calculate PSD of data from normal FFT
+        PSD = {
+            # imaginary part is zero
+            "xx": pr.calcPSD(FFT["x"], FFT["x"], data["Meta"]["frequency"], "boxcar").real,
+            "yy": pr.calcPSD(FFT["y"], FFT["y"], data["Meta"]["frequency"], "boxcar").real,
+            "zz": pr.calcPSD(FFT["z"], FFT["z"], data["Meta"]["frequency"], "boxcar").real,
+
+            "xy": pr.calcPSD(FFT["x"], FFT["y"], data["Meta"]["frequency"], "boxcar"),
+            "zx": pr.calcPSD(FFT["z"], FFT["x"], data["Meta"]["frequency"], "boxcar"),
+            "zy": pr.calcPSD(FFT["z"], FFT["y"], data["Meta"]["frequency"], "boxcar"),
+
+            "freq_space": np.fft.rfftfreq(acc["z"].size, 1/data["Meta"]["frequency"])
+        }
+
+        # calculate PSD on output from welch method FFT
+        wPSD = {
+            "xx": pr.wcalcPSD(wFFT["x"], wFFT["x"], data["Meta"]["frequency"], window_type).real,
+            "yy": pr.wcalcPSD(wFFT["y"], wFFT["y"], data["Meta"]["frequency"], window_type).real,
+            "zz": pr.wcalcPSD(wFFT["z"], wFFT["z"], data["Meta"]["frequency"], window_type).real,
+
+            "xy": pr.wcalcPSD(wFFT["x"], wFFT["y"], data["Meta"]["frequency"], window_type),
+            "zx": pr.wcalcPSD(wFFT["z"], wFFT["x"], data["Meta"]["frequency"], window_type),
+            "zy": pr.wcalcPSD(wFFT["z"], wFFT["y"], data["Meta"]["frequency"], window_type),
+
+            "freq_space": np.fft.rfftfreq(wFFT["z"][0].size*2-1, 1/data["Meta"]["frequency"])
+        }        
+
+        # bit mask so as to select only within the bounds of one lower:upper range pair
+        freq_select = np.logical_and(
+            np.less_equal.outer(freq_lower, PSD["freq_space"]),
+            np.greater_equal.outer(freq_upper, PSD["freq_space"])
+        )
+        count = freq_select.sum(axis=1)
+        window_type = "boxcar"
+        windowing_method = pr.Bias(len(PSD["freq_space"]), window_type)
+
+        # calculate PSD on With banded method
+        bPSD = {
+            "xx": (freq_select * PSD["xx"] * windowing_method).sum(axis=1) / count,
+            "yy": (freq_select * PSD["yy"] * windowing_method).sum(axis=1) / count,
+            "zz": (freq_select * PSD["zz"] * windowing_method).sum(axis=1) / count,
+
+            "xy": (freq_select * PSD["xy"] * windowing_method).sum(axis=1) / count,
+            "zx": (freq_select * PSD["zx"] * windowing_method).sum(axis=1) / count,
+            "zy": (freq_select * PSD["zy"] * windowing_method).sum(axis=1) / count,
+
+            "freq_space": freq_midpoints
+        }
+
+        # append PSDs
+        PSDs.append(PSD)
+        wPSDs.append(wPSD)
+        bPSDs.append(bPSD)
+
+        ################################# 
+        # calculation
+        #################################
+
+        if(any(i > 500 for i in acc["x"]) or any(i > 500 for i in acc["y"]) or any(i > 500 for i in acc["z"])):
+            print(f"block {i}:  bad data containing extremely large values")
+            wCalcs.append(pr.errorCalc())     
+            bCalcs.append(pr.errorCalc())    
+        else:
+            # welch method calculations
+            wCalcs.append(pr.welchCalc(wPSD, data))
+            # banding method calculations
+            bCalcs.append(pr.bandedCalc(bPSD, data))
+
+    #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using sometime of custom merging function
+    
 
 
-    # STEP 4 Wave calculations normal
-
-    calcWelch(filename)
-    # STEP 5 Wave calculations Welch
-    # STEP 6 Wave calculations banded
+   
 
 
 
