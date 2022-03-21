@@ -54,7 +54,13 @@ def Data(filename) -> dict:
             "time_lower": wave_xr.TimeBounds[:, 0],
             "time_upper": wave_xr.TimeBounds[:, 1],
             "FreqBounds": wave_xr.FreqBounds,
-            "Bandwidth": wave_xr.Bandwidth
+            "Bandwidth": wave_xr.Bandwidth.to_numpy()
+        },
+
+        "Freq": {
+            "lower": wave_xr.FreqBounds[:, 0].to_numpy(),
+            "upper": wave_xr.FreqBounds[:, 1].to_numpy(),
+            "joint": wave_xr.FreqBounds[:, :].to_numpy()
         }
     }
 

@@ -8,7 +8,7 @@ import os
 
 
 import processdata as processdata
-
+from processdata import (getWelchPSDs, calcWelch)
 
 
 def process(filename: str, args: ArgumentParser) -> None:
@@ -23,19 +23,30 @@ def process(filename: str, args: ArgumentParser) -> None:
     PSDs, CSDs = processdata.getPSDs(filename)
 
     # write PSDs and CSDs to output file in PSD and CSD group
-    xr.Dataset(CSDs).to_netcdf(output_dir, mode="w", group="PSD")
-    xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="CSD")
-    
-   
+    xr.Dataset(CSDs).to_netcdf(output_dir, mode="w", group="CSD")
+    xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="PSD")
 
     # STEP 2 Calculate Welch PSD and CSD
 
+    PSDs, CSDs = processdata.getWelchPSDs(filename)
+
+    xr.Dataset(CSDs).to_netcdf(output_dir, mode="a", group="wCSD")
+    xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="wPSD")
 
     # STEP 3 Calculate Banded PSD and CSD
 
+    PSDs, CSDs = processdata.getBandPSDs(filename)
+
+    #xr.Dataset(CSDs).to_netcdf(output_dir, mode="a", group="BandedCSD")
+    #xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="BandedPSD")
+
+
     # STEP 4 Wave calculations normal
+
+    calcWelch(filename)
     # STEP 5 Wave calculations Welch
     # STEP 6 Wave calculations banded
+
 
 
 
@@ -46,7 +57,7 @@ def main(raw_args=None):
     
     # required
     parser.add_argument("nc", nargs="+", type=str, help="netCDF file to process") 
-    
+
     args = parser.parse_args(raw_args)
     # for each nc filename passed
     for fn in args.nc:
