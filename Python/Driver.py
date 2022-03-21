@@ -36,6 +36,8 @@ def process(filename: str, args: ArgumentParser) -> None:
     # STEP 3 Calculate Banded PSD and CSD
 
     PSDs, CSDs = processdata.getBandPSDs(filename)
+    xr.Dataset(CSDs).to_netcdf(output_dir, mode="a", group="bCSD")
+    xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="bPSD")
 
     #xr.Dataset(CSDs).to_netcdf(output_dir, mode="a", group="BandedCSD")
     #xr.Dataset(PSDs).to_netcdf(output_dir, mode="a", group="BandedPSD")

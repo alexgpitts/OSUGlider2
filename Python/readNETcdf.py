@@ -3,17 +3,30 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from argparse import ArgumentParser
 import xarray as xr
-import netCDF4 as nc4
-import os
+
 
 def process(filename: str, args: ArgumentParser) -> None:
+
+    # normal
     PSD_xr = xr.open_dataset(filename, group="PSD")
     CSD_xr = xr.open_dataset(filename, group="CSD")
 
-      
     print("PSD\n", PSD_xr)
     print("CSD\n", CSD_xr)
 
+    # welch
+    wPSD_xr = xr.open_dataset(filename, group="wPSD")
+    wCSD_xr = xr.open_dataset(filename, group="wCSD")
+    
+    print("wPSD\n", wPSD_xr)
+    print("wCSD\n", wCSD_xr)
+
+    # banded
+    bPSD_xr = xr.open_dataset(filename, group="bPSD")
+    bCSD_xr = xr.open_dataset(filename, group="bCSD")
+    
+    print("bPSD\n", bPSD_xr)
+    print("bCSD\n", bCSD_xr)
 
 
 def main(raw_args=None):
