@@ -185,7 +185,7 @@ def getPSDs(filename: str) -> dict:
     return PSDss, CSDss
 
 
-def testThisShit(fn: str) -> dict: 
+def testThis(fn: str) -> dict: 
     data = gd.Data(fn)
 
     frequency = data["Meta"]["frequency"]
@@ -451,7 +451,7 @@ def calcWelch(filename: str) -> None:
     time = data["XYZ"]["t"]
     timebounds = data["Wave"]["Timebounds"]
 
-    test = testThisShit(filename)
+    test = testThis(filename)
 
     outputs = []
     for i in range(len(timebounds)):
