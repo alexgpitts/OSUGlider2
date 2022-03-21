@@ -11,22 +11,22 @@ def process(filename: str, args: ArgumentParser) -> None:
     PSD_xr = xr.open_dataset(filename, group="PSD")
     CSD_xr = xr.open_dataset(filename, group="CSD")
 
-    print("PSD\n", PSD_xr)
-    print("CSD\n", CSD_xr)
+    print("PSD\n", PSD_xr, "\n\n")
+    print("CSD\n", CSD_xr, "\n\n")
 
     # welch
-    wPSD_xr = xr.open_dataset(filename, group="wPSD")
-    wCSD_xr = xr.open_dataset(filename, group="wCSD")
+    wPSD_xr = xr.open_dataset(filename, group="WelchPSD")
+    wCSD_xr = xr.open_dataset(filename, group="WelchCSD")
     
-    print("wPSD\n", wPSD_xr)
-    print("wCSD\n", wCSD_xr)
+    print("Welch PSD\n", wPSD_xr, "\n\n")
+    print("Welch CSD\n", wCSD_xr, "\n\n")
 
     # banded
-    bPSD_xr = xr.open_dataset(filename, group="bPSD")
-    bCSD_xr = xr.open_dataset(filename, group="bCSD")
+    bPSD_xr = xr.open_dataset(filename, group="BandedPSD")
+    bCSD_xr = xr.open_dataset(filename, group="BandedCSD")
     
-    print("bPSD\n", bPSD_xr)
-    print("bCSD\n", bCSD_xr)
+    print("Banded PSD\n", bPSD_xr, "\n\n")
+    print("Banded CSD\n", bCSD_xr, "\n\n")
 
 
 def main(raw_args=None):

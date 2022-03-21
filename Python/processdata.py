@@ -24,6 +24,120 @@ def merge(data):
     )
     return dataset 
 
+
+def formatPSD(Data: dict)->dict:
+    """takes in an array of dictionaries and combines them into a dictionary of lists"""
+    wPSDxxs = []
+    wPSDyys = []
+    wPSDzzs = []
+    wPSDxxs_imag = []
+    wPSDyys_imag = []
+    wPSDzzs_imag = []
+    wCSDxys = []
+    wCSDzxs = []
+    wCSDzys = []
+    wCSDxys_imag = []
+    wCSDzxs_imag = []
+    wCSDzys_imag = []
+    freq_spaces = []
+
+    for i in range (len(Data)):
+        wPSDxxs.append(Data[i]["xx"].real)
+        wPSDyys.append(Data[i]["yy"].real)
+        wPSDzzs.append(Data[i]["zz"].real)
+        wPSDxxs_imag.append(Data[i]["xx"].imag)
+        wPSDyys_imag.append(Data[i]["yy"].imag)
+        wPSDzzs_imag.append(Data[i]["zz"].imag)
+
+        wCSDxys.append(Data[i]["xy"].real)
+        wCSDzxs.append(Data[i]["zx"].real)
+        wCSDzys.append(Data[i]["zy"].real)
+        wCSDxys_imag.append(Data[i]["xy"].imag)
+        wCSDzxs_imag.append(Data[i]["zx"].imag)
+        wCSDzys_imag.append(Data[i]["zy"].imag)
+        
+        freq_spaces.append(Data[i]["freq_space"])
+
+    freq_space = merge(freq_spaces)
+    wPSDss = xr.Dataset({
+        "x": merge(wPSDxxs),
+        "y": merge(wPSDyys),
+        "z": merge(wPSDzzs),
+        "x_imag": merge(wPSDxxs_imag),
+        "y_imag": merge(wPSDyys_imag),
+        "z_imag": merge(wPSDzzs_imag),
+        "freq_space": freq_space
+    })
+
+    # merge all CSD lists into a dataset    
+    wCSDss = xr.Dataset({
+        "xy": merge(wCSDxys),
+        "zx": merge(wCSDzxs),
+        "zy": merge(wCSDzys),
+        "xy_imag": merge(wCSDxys_imag),
+        "zx_imag": merge(wCSDzxs_imag),
+        "zy_imag": merge(wCSDzys_imag),
+        "freq_space": freq_space
+    })
+
+    return wPSDss, wCSDss
+
+
+def formatCalc(Data: dict)->dict:
+    """takes in an array of dictionaries and combines them into a dictionary of lists"""
+    Hs = [] 
+    Ta = []   
+    Tp = []   
+    wave_energy_ratio = [] 
+    Tz = [] 
+    PeakPSD = [] 
+    Te = [] 
+    Dp = [] 
+    Dp_mag = [] 
+    Dp_true = [] 
+    A1 = [] 
+    B1 = [] 
+    A2 = [] 
+    B2 = []     
+    
+    for i in range (len(Data)):
+        Hs.append(Data[i]["Hs"]) 
+        Ta.append(Data[i]["Ta"])   
+        Tp.append(Data[i]["Tp"])   
+        wave_energy_ratio.append(Data[i]["wave_energy_ratio"]) 
+        Tz.append(Data[i]["Tz"]) 
+        PeakPSD.append(Data[i]["PeakPSD"]) 
+        Te.append(Data[i]["Te"]) 
+        Dp.append(Data[i]["Dp"]) 
+        Dp_mag.append(Data[i]["Dp_mag"]) 
+        Dp_true.append(Data[i]["Dp_true"]) 
+        A1.append(Data[i]["A1"]) 
+        B1.append(Data[i]["B1"]) 
+        A2.append(Data[i]["A2"]) 
+        B2.append(Data[i]["B2"]) 
+
+    output = {
+        "Hs": Hs,
+        "Ta": Ta,  # average period
+        "Tp": Tp,  # peak wave period
+        "wave_energy_ratio": wave_energy_ratio,
+        "Tz": Tz,
+        "PeakPSD": PeakPSD,
+        "Te": Te,
+        "Dp": Dp,
+        "Dp_mag": Dp_mag,
+        "Dp_true": Dp_true,
+        "A1": merge(A1),
+        "B1": merge(B1),
+        "A2": merge(A2),
+        "B2": merge(B2)
+    }
+
+    return output
+
+    
+
+
 def Rolling_mean(x: np.array, w: np.array) -> np.array:
     """Smoothes the raw acceleration data with a rolling mean. 
     Accepts data to be smoothed and a window width for the moving average. 
@@ -85,7 +199,7 @@ def calcPSD(xFFT: np.array, yFFT: np.array, fs: float, window: str) -> np.array:
         psd[1:-1] *= 2  # Real FFT -> double for non-zero freq
     return psd
 
-def errorCalc() -> dict:
+def errorCalc(len: int) -> dict:
     output = {
         "Hs": np.NAN,
         "Ta": np.NAN,  # average period
@@ -97,15 +211,15 @@ def errorCalc() -> dict:
         "Dp": np.NAN,
         "Dp_mag": np.NAN,
         "Dp_true": np.NAN,
-        "A1": [np.NAN],
-        "B1": [np.NAN],
-        "A2": [np.NAN],
-        "B2": [np.NAN]
+        "A1": np.zeros(len),
+        "B1": np.zeros(len),
+        "A2": np.zeros(len),
+        "B2": np.zeros(len)
     }
     return output
 
 def welchCalc(PSD: dict, Data: dict) -> dict:
-    
+
     # non directional
     a0 = PSD["zz"][1:] / np.square(np.square(2 * np.pi * PSD["freq_space"][1:]))
     m0 = (a0 * PSD["freq_space"][1]).sum()

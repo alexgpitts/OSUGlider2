@@ -136,8 +136,8 @@ def process(filename: str, args: ArgumentParser) -> None:
 
         if(any(i > 500 for i in acc["x"]) or any(i > 500 for i in acc["y"]) or any(i > 500 for i in acc["z"])):
             print(f"block {i}:  bad data containing extremely large values")
-            wCalcs.append(pr.errorCalc())     
-            bCalcs.append(pr.errorCalc())    
+            wCalcs.append(pr.errorCalc(len(wPSD["freq_space"])))     
+            bCalcs.append(pr.errorCalc(len(freq_midpoints)))    
         else:
             # welch method calculations
             wCalcs.append(pr.welchCalc(wPSD, data))
@@ -145,10 +145,28 @@ def process(filename: str, args: ArgumentParser) -> None:
             bCalcs.append(pr.bandedCalc(bPSD, data))
 
     #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using some type of custom dictionary merging function
+
+    PSD_Norm, CSD_Norm = pr.formatPSD(PSDs)
+    xr.Dataset(PSD_Norm).to_netcdf(output_dir, mode="a", group="PSD")
+    xr.Dataset(CSD_Norm).to_netcdf(output_dir, mode="a", group="CSD")
+
+    wPSD_Welch, wCSD_Welch = pr.formatPSD(wPSDs)
+    xr.Dataset(wPSD_Welch).to_netcdf(output_dir, mode="a", group="WelchPSD")
+    xr.Dataset(wCSD_Welch).to_netcdf(output_dir, mode="a", group="WelchCSD")
+
+    bPSD_Banded, bCSD_Banded = pr.formatPSD(bPSDs)
+    xr.Dataset(bPSD_Banded).to_netcdf(output_dir, mode="a", group="BandedPSD")
+    xr.Dataset(bCSD_Banded).to_netcdf(output_dir, mode="a", group="BandedCSD")
+
+    calcs_welch = pr.formatCalc(wCalcs)
+    xr.Dataset(calcs_welch).to_netcdf(output_dir, mode="a", group="WelchWave")
+    
+    calcs_banded = pr.formatCalc(bCalcs)
+    xr.Dataset(calcs_banded).to_netcdf(output_dir, mode="a", group="Wave")
+
+    
     
 
-
-   
 
 
 
