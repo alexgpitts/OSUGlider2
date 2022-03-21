@@ -144,7 +144,7 @@ def process(filename: str, args: ArgumentParser) -> None:
             # banding method calculations
             bCalcs.append(pr.bandedCalc(bPSD, data))
 
-    #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using sometime of custom merging function
+    #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using sometime of custom dictionary merging function
     
 
 
