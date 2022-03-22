@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 
-def Plotter(fig, axs, xy) -> NULL:
+def Plotter(fig, axs, xy, legend):
     """Takes a Figure from matplotlib, the array for the figure, and a list of data to plot,
     data in xy stored as a list of lists where xy = [["title", "namex", "namey", [x], [y]], [...]] 
     where x and y can be lists of plots themselves
     """
+    
     index = 0
     for i in axs.reshape(-1):
         i.set_title(xy[index][0])
@@ -25,6 +26,7 @@ def Plotter(fig, axs, xy) -> NULL:
         else:
             i.plot(xy[index][3], xy[index][4])
 
-
         index += 1
+    plt.legend(legend, bbox_to_anchor=(1.1, 1.05))
     plt.tight_layout()
+    
