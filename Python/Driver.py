@@ -1,6 +1,11 @@
+"""
+Driver file to process a .nc file and store PSDs, CSDs and other calculations in an _output.nc file
+
+Authors: Alex Pitts, Benjamin Cha, Clayton Surgeon 
+"""
+
+
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 import getdata as gd
 from argparse import ArgumentParser
 import xarray as xr

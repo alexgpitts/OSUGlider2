@@ -1,3 +1,13 @@
+
+"""
+Description: Testing file to read a NETCDF file
+
+to run: 
+    python .\readNETcdf.py "your file.nc"
+
+Author: Alex Pitts
+"""
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

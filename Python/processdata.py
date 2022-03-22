@@ -1,16 +1,14 @@
 """
 This file containes all the calculations for calculating PSDs, CSDs, directional values, and non directional values
 
-Authors: 
+Authors: Alex Pitts, Benjamin Cha, Clayton Surgeon 
 """
 from asyncio.windows_events import NULL
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
 import pandas as pd
-import os, sys
-import getdata as gd
-from argparse import ArgumentParser
+
 
 def merge(data):
     """takes a list and merges the elements into a dataset"""

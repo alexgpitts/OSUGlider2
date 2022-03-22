@@ -1,7 +1,7 @@
 """
 This file contains all the code for opening our NetCDF file and storing the data in dictionaries
 
-Authors: 
+Authors: Alex Pitts, Benjamin Cha, Clayton Surgeon 
 """
 
 import numpy as np
