@@ -12,6 +12,36 @@ import xarray as xr
 import netCDF4 as nc4
 import os
 import processdata as pr
+import MyYAML as yam
+import yaml
+
+
+def load_meta(fn:str) -> dict:
+    with open(fn, "r") as fp:
+        lines = fp.read()
+        data = yaml.load(lines, Loader=yaml.SafeLoader)
+
+        meta = xr.Dataset ({
+            "frequency": data["meta"]["frequency"],
+            "longitude": data["meta"]["deployLongitude"],
+            "latitude": data["meta"]["deployLatitude"],
+            "depth": data["meta"]["depth"],
+            "declination": data["meta"]["declination"]
+        })
+    print(meta)
+    return meta
+    # except Exception as e:
+    #     raise e
+    
+
+def __process(fn: str, args: ArgumentParser) -> None:
+       # construct an output .nc file
+    folder_name = os.path.split(args.nc[0])[0]
+    output_name = os.path.splitext(os.path.basename(args.nc[0]))[0] + "_output.nc"
+    output_dir = os.path.join(folder_name, output_name)
+
+    if args.yaml:
+        xr.Dataset(load_meta(fn)).to_netcdf(output_dir, mode="a", group="Meta")
 
 
 def process(filename: str, args: ArgumentParser) -> None:
@@ -151,6 +181,12 @@ def process(filename: str, args: ArgumentParser) -> None:
 
     #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using some type of custom dictionary merging function
 
+  
+    # testYAML = load_meta(args.yaml) 
+    # print(testYAML)
+    
+ 
+
     PSD_Norm, CSD_Norm = pr.formatPSD(PSDs)
     xr.Dataset(PSD_Norm).to_netcdf(output_dir, mode="a", group="PSD")
     xr.Dataset(CSD_Norm).to_netcdf(output_dir, mode="a", group="CSD")
@@ -169,12 +205,6 @@ def process(filename: str, args: ArgumentParser) -> None:
     calcs_banded = pr.formatCalc(bCalcs)
     xr.Dataset(calcs_banded).to_netcdf(output_dir, mode="a", group="Wave")
 
-    
-    
-
-
-
-
 
 def main(raw_args=None):
     # command line stuff
@@ -183,11 +213,17 @@ def main(raw_args=None):
     
     # required
     parser.add_argument("nc", nargs="+", type=str, help="netCDF file to process") 
+    parser.add_argument("--yaml", nargs="+", type=str, help="YAML file(s) to load")
 
     args = parser.parse_args(raw_args)
     # for each nc filename passed
     for fn in args.nc:
         process(fn, args)
+
+    if args.yaml:
+        for fn in args.yaml:
+            __process(fn, args)
+            # return
 
 
 if __name__ == "__main__":
