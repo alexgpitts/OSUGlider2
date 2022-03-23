@@ -3,11 +3,18 @@ This file contains all the code for opening our NetCDF file and storing the data
 
 Authors: Alex Pitts, Benjamin Cha, Clayton Surgeon 
 """
-
+from argparse import ArgumentParser
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
+
+def output(args: ArgumentParser) -> str:
+    folder_name = os.path.split(args.nc[0])[0]
+    output_name = os.path.splitext(os.path.basename(args.nc[0]))[0] + "_output.nc"
+    output_dir = os.path.join(folder_name, output_name)
+    return output_dir
 
 def calcAcceleration(x: np.array, fs: float) -> np.array:
     """converts displacement data to acceleration.
@@ -18,13 +25,11 @@ def calcAcceleration(x: np.array, fs: float) -> np.array:
     dx2[0:2] = dx2[2]
     return dx2 * fs * fs
 
-
 def Data(filename) -> dict:
     """Master data reading function. Reads the .nc file from CDIP.
     The data is stored in dictionary (data), which contains many dictionaries 
     to hold information. Examples include: acceleration data, frequency bounds, etc."""
    
-
     meta_xr = xr.open_dataset(filename, group="Meta")  # For water depth
     wave_xr = xr.open_dataset(filename, group="Wave")
     xyz_xr = xr.open_dataset(filename, group="XYZ")
@@ -47,6 +52,12 @@ def Data(filename) -> dict:
             "x": calcAcceleration(xyz_xr.x.to_numpy(), frequency),
             "y": calcAcceleration(xyz_xr.y.to_numpy(), frequency),
             "z": calcAcceleration(xyz_xr.z.to_numpy(), frequency),
+        },
+
+        "TXYZ": {
+            "x": xyz_xr.x.to_numpy(),
+            "y": xyz_xr.y.to_numpy(),
+            "z": xyz_xr.z.to_numpy()
         },
         
         "Wave": {

@@ -8,29 +8,25 @@ Authors: Alex Pitts, Benjamin Cha, Clayton Surgeon
 import numpy as np
 import getdata as gd
 from argparse import ArgumentParser
+from MyCSV import acceleration_XYZ, store_data
+from getdata import output
 import xarray as xr
 import netCDF4 as nc4
 import os
 import processdata as pr
 import MyYAML as meta
 
+# python .\Driver.py --group=Meta --group=Wave --group=XYZ '.\ncFiles\067.20201225_1200.20201225_1600.nc'
+# (at least 1 group has to be used) python .\Driver.py --yaml=meta.yaml --group=Wave '.\ncFiles\067.20201225_1200.20201225_1600.nc'
 
 def __process(fn: str, args: ArgumentParser) -> None:
-       # construct an output .nc file
-    folder_name = os.path.split(args.nc[0])[0]
-    output_name = os.path.splitext(os.path.basename(args.nc[0]))[0] + "_output.nc"
-    output_dir = os.path.join(folder_name, output_name)
-
+    # stores meta data from yaml file
     if args.yaml:
-        xr.Dataset(meta.load_meta(fn)).to_netcdf(output_dir, mode="a", group="Meta")
-
+        xr.Dataset(meta.load_meta(fn)).to_netcdf(output(args), mode="a", group="Meta")
 
 def process(filename: str, args: ArgumentParser) -> None:
-    # construct an output .nc file
-    folder_name = os.path.split(args.nc[0])[0]
-    output_name = os.path.splitext(os.path.basename(args.nc[0]))[0] + "_output.nc"
-    output_dir = os.path.join(folder_name, output_name)
-    nc4.Dataset(output_dir, 'w', format='NETCDF4')
+    # A function in getdata has this implemented so it can be pull in other files and reduce repeated code
+    nc4.Dataset(output(args), 'w', format='NETCDF4') # constructs an nc file
 
     data = gd.Data(filename)
     
@@ -162,29 +158,27 @@ def process(filename: str, args: ArgumentParser) -> None:
 
     #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using some type of custom dictionary merging function
 
-  
-    # testYAML = load_meta(args.yaml) 
-    # print(testYAML)
-    
- 
+    # I'd like to call these in the main function, but it doesn't work there for some reason, but it works the same way
+    acceleration_XYZ(filename,args) # our acceleration goes in first by default, can be overwritten later
+    store_data(args) # stores in csv files by default, but optional
 
     PSD_Norm, CSD_Norm = pr.formatPSD(PSDs)
-    xr.Dataset(PSD_Norm).to_netcdf(output_dir, mode="a", group="PSD")
-    xr.Dataset(CSD_Norm).to_netcdf(output_dir, mode="a", group="CSD")
+    xr.Dataset(PSD_Norm).to_netcdf(output(args), mode="a", group="PSD")
+    xr.Dataset(CSD_Norm).to_netcdf(output(args), mode="a", group="CSD")
 
     wPSD_Welch, wCSD_Welch = pr.formatPSD(wPSDs)
-    xr.Dataset(wPSD_Welch).to_netcdf(output_dir, mode="a", group="WelchPSD")
-    xr.Dataset(wCSD_Welch).to_netcdf(output_dir, mode="a", group="WelchCSD")
+    xr.Dataset(wPSD_Welch).to_netcdf(output(args), mode="a", group="WelchPSD")
+    xr.Dataset(wCSD_Welch).to_netcdf(output(args), mode="a", group="WelchCSD")
 
     bPSD_Banded, bCSD_Banded = pr.formatPSD(bPSDs)
-    xr.Dataset(bPSD_Banded).to_netcdf(output_dir, mode="a", group="BandedPSD")
-    xr.Dataset(bCSD_Banded).to_netcdf(output_dir, mode="a", group="BandedCSD")
+    xr.Dataset(bPSD_Banded).to_netcdf(output(args), mode="a", group="BandedPSD")
+    xr.Dataset(bCSD_Banded).to_netcdf(output(args), mode="a", group="BandedCSD")
 
     calcs_welch = pr.formatCalc(wCalcs)
-    xr.Dataset(calcs_welch).to_netcdf(output_dir, mode="a", group="WelchWave")
+    xr.Dataset(calcs_welch).to_netcdf(output(args), mode="a", group="WelchWave")
     
     calcs_banded = pr.formatCalc(bCalcs)
-    xr.Dataset(calcs_banded).to_netcdf(output_dir, mode="a", group="Wave")
+    xr.Dataset(calcs_banded).to_netcdf(output(args), mode="a", group="BandedWave")
 
 
 def main(raw_args=None):
@@ -195,15 +189,20 @@ def main(raw_args=None):
     # required
     parser.add_argument("nc", nargs="+", type=str, help="netCDF file to process") 
     parser.add_argument("--yaml", nargs="+", type=str, help="YAML file(s) to load")
-
+    parser.add_argument("--meta", type=str, metavar="meta.csv", default="meta.csv", help="For Meta Group")
+    parser.add_argument("--wave", type=str, metavar="wave.csv", default="wave.csv", help="For Wave Group")
+    parser.add_argument("--xyz", type=str, metavar="acceleration.csv", default="acceleration.csv", help="For XYZ Group")
+    parser.add_argument("--group", type=str, action="append", required=True, choices=("Meta", "Wave", "XYZ"), help="Enter Meta, Wave or XYZ")
     args = parser.parse_args(raw_args)
+
     # for each nc filename passed
     for fn in args.nc:
-        process(fn, args)
-
-    if args.yaml:
+        process(fn, args) # then goes to store calculated data 
+        
+    # cannot merge a yaml and nc file in one for loop because of different file names
+    if args.yaml: 
         for fn in args.yaml:
-            __process(fn, args)
+            __process(fn, args) # optional to store meta from yaml file
 
 
 if __name__ == "__main__":
