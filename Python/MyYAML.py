@@ -23,16 +23,3 @@ def load_meta(fn:str) -> dict:
         return meta
     except Exception as e:
         raise e
-
-def merge(data):
-    """takes a list and merges the elements into a dataset"""
-    dataset = xr.DataArray(
-        np.array(data, dtype=object),
-        dims = ("timeblock", "value"),
-        coords = {
-            "value": (np.arange(0, len(data[0]))).tolist(),
-            "timeblock": (np.arange(0, len(data))).tolist(),
-        }
-    )
-    return dataset 
-
