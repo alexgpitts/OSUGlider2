@@ -1,38 +1,38 @@
-#! /usr/bin/env python3
-
-import yaml
-import logging
+import numpy as np
 import xarray as xr
-import netCDF4 as nc4
-import os
-from argparse import ArgumentParser
+import matplotlib.pyplot as plt
+import pandas as pd
+import yaml
 
-
+# python .\Driver.py --yaml=meta.yml '.\ncFiles\067.20201225_1200.20201225_1600.nc'
+# pip install pyyaml
 def load_meta(fn:str) -> dict:
-    # try:
-    with open(fn, "r") as fp:
-        lines = fp.read()
-        data = yaml.load(lines, Loader=yaml.SafeLoader)
+    try:
+        with open(fn, "r") as fp:
+            lines = fp.read()
+            data = yaml.load(lines, Loader=yaml.SafeLoader)
 
-        meta = xr.Dataset ({
-            "frequency": data["meta"]["frequency"],
-            "longitude": data["meta"]["deployLongitude"],
-            "latitude": data["meta"]["deployLatitude"],
-            "depth": data["meta"]["depth"],
-            "declination": data["meta"]["declination"]
-        })
-    print(meta)
-    return meta
-    # except Exception as e:
-    #     raise e
-    
-# def main():
-#     parser = ArgumentParser()
-#     parser.add_argument("yaml", nargs="+", metavar="fn.yml", help="YAML file(s) to load")
-#     args = parser.parse_args()
+            meta = xr.Dataset ({
+                "frequency": data["meta"]["frequency"],
+                "longitude": data["meta"]["deployLongitude"],
+                "latitude": data["meta"]["deployLatitude"],
+                "depth": data["meta"]["depth"],
+                "declination": data["meta"]["declination"]
+            })
+        print(meta)
+        return meta
+    except Exception as e:
+        raise e
 
-#     for fn in args.yaml:
-#         load_meta(fn)
+def merge(data):
+    """takes a list and merges the elements into a dataset"""
+    dataset = xr.DataArray(
+        np.array(data, dtype=object),
+        dims = ("timeblock", "value"),
+        coords = {
+            "value": (np.arange(0, len(data[0]))).tolist(),
+            "timeblock": (np.arange(0, len(data))).tolist(),
+        }
+    )
+    return dataset 
 
-# if __name__ == "__main__":
-#     main()

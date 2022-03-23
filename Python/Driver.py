@@ -12,27 +12,8 @@ import xarray as xr
 import netCDF4 as nc4
 import os
 import processdata as pr
-import MyYAML as yam
-import yaml
+import MyYAML as meta
 
-
-def load_meta(fn:str) -> dict:
-    with open(fn, "r") as fp:
-        lines = fp.read()
-        data = yaml.load(lines, Loader=yaml.SafeLoader)
-
-        meta = xr.Dataset ({
-            "frequency": data["meta"]["frequency"],
-            "longitude": data["meta"]["deployLongitude"],
-            "latitude": data["meta"]["deployLatitude"],
-            "depth": data["meta"]["depth"],
-            "declination": data["meta"]["declination"]
-        })
-    print(meta)
-    return meta
-    # except Exception as e:
-    #     raise e
-    
 
 def __process(fn: str, args: ArgumentParser) -> None:
        # construct an output .nc file
@@ -41,7 +22,7 @@ def __process(fn: str, args: ArgumentParser) -> None:
     output_dir = os.path.join(folder_name, output_name)
 
     if args.yaml:
-        xr.Dataset(load_meta(fn)).to_netcdf(output_dir, mode="a", group="Meta")
+        xr.Dataset(meta.load_meta(fn)).to_netcdf(output_dir, mode="a", group="Meta")
 
 
 def process(filename: str, args: ArgumentParser) -> None:
@@ -223,7 +204,6 @@ def main(raw_args=None):
     if args.yaml:
         for fn in args.yaml:
             __process(fn, args)
-            # return
 
 
 if __name__ == "__main__":
