@@ -1,6 +1,5 @@
 """
 Driver file to process a .nc file and store PSDs, CSDs and other calculations in an _output.nc file
-
 Authors: Alex Pitts, Benjamin Cha, Clayton Surgeon 
 """
 
@@ -162,23 +161,31 @@ def process(filename: str, args: ArgumentParser) -> None:
     acceleration_XYZ(filename,args) # our acceleration goes in first by default, can be overwritten later
     store_data(args) # stores in csv files by default, but optional
 
-    PSD_Norm, CSD_Norm = pr.formatPSD(PSDs)
+    # PSDs and CSDs with normal calculation method
+    PSD_Norm = pr.formatPSD(PSDs)
     xr.Dataset(PSD_Norm).to_netcdf(output(args), mode="a", group="PSD")
-    xr.Dataset(CSD_Norm).to_netcdf(output(args), mode="a", group="CSD")
 
-    wPSD_Welch, wCSD_Welch = pr.formatPSD(wPSDs)
+    # PSDs and CSDs with Welch calculation method
+    wPSD_Welch = pr.formatPSD(wPSDs)
     xr.Dataset(wPSD_Welch).to_netcdf(output(args), mode="a", group="WelchPSD")
-    xr.Dataset(wCSD_Welch).to_netcdf(output(args), mode="a", group="WelchCSD")
 
-    bPSD_Banded, bCSD_Banded = pr.formatPSD(bPSDs)
+    # PSDs and CSDs with banding calculation method
+    bPSD_Banded = pr.formatPSD(bPSDs)
     xr.Dataset(bPSD_Banded).to_netcdf(output(args), mode="a", group="BandedPSD")
-    xr.Dataset(bCSD_Banded).to_netcdf(output(args), mode="a", group="BandedCSD")
+  
+    # PSDs and CSDs with banded welch calculation method
+    # comming soon...
 
+    # calculations using welchPSD
     calcs_welch = pr.formatCalc(wCalcs)
     xr.Dataset(calcs_welch).to_netcdf(output(args), mode="a", group="WelchWave")
     
+    # calculations using BandedPSD
     calcs_banded = pr.formatCalc(bCalcs)
     xr.Dataset(calcs_banded).to_netcdf(output(args), mode="a", group="BandedWave")
+
+    # calculations using BandedWelchPSD
+    # comming soon
 
 
 def main(raw_args=None):

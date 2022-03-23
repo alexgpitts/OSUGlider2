@@ -57,6 +57,8 @@ def formatPSD(Data: dict)->dict:
         freq_spaces.append(Data[i]["freq_space"])
 
     freq_space = merge(freq_spaces)
+
+    # create dictionary with merged lists
     wPSDss = xr.Dataset({
         "x": merge(wPSDxxs),
         "y": merge(wPSDyys),
@@ -64,11 +66,6 @@ def formatPSD(Data: dict)->dict:
         "x_imag": merge(wPSDxxs_imag),
         "y_imag": merge(wPSDyys_imag),
         "z_imag": merge(wPSDzzs_imag),
-        "freq_space": freq_space
-    })
-
-    # merge all CSD lists into a dataset    
-    wCSDss = xr.Dataset({
         "xy": merge(wCSDxys),
         "zx": merge(wCSDzxs),
         "zy": merge(wCSDzys),
@@ -78,7 +75,7 @@ def formatPSD(Data: dict)->dict:
         "freq_space": freq_space
     })
 
-    return wPSDss, wCSDss
+    return wPSDss
 
 
 def formatCalc(Data: dict)->dict:
