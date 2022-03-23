@@ -7,7 +7,6 @@ Authors: Alex Pitts, Benjamin Cha, Clayton Surgeon
 import numpy as np
 import getdata as gd
 from argparse import ArgumentParser
-from MyCSV import acceleration_XYZ, store_data
 from getdata import output
 import xarray as xr
 import netCDF4 as nc4
@@ -25,7 +24,7 @@ def __process(fn: str, args: ArgumentParser) -> None:
 
 def process(filename: str, args: ArgumentParser) -> None:
     # A function in getdata has this implemented so it can be pull in other files and reduce repeated code
-    nc4.Dataset(output(args), 'w', format='NETCDF4') # constructs an nc file
+    # nc4.Dataset(output(args), 'w', format='NETCDF4') # constructs an nc file
 
     data = gd.Data(filename)
     
@@ -155,11 +154,7 @@ def process(filename: str, args: ArgumentParser) -> None:
             # banding method calculations
             bCalcs.append(pr.bandedCalc(bPSD, data))
 
-    #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using some type of custom dictionary merging function
-
-    # I'd like to call these in the main function, but it doesn't work there for some reason, but it works the same way
-    acceleration_XYZ(filename,args) # our acceleration goes in first by default, can be overwritten later
-    store_data(args) # stores in csv files by default, but optional
+    #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using some type of custom dictionary merging functionl
 
     # PSDs and CSDs with normal calculation method
     PSD_Norm = pr.formatPSD(PSDs)
@@ -196,10 +191,6 @@ def main(raw_args=None):
     # required
     parser.add_argument("nc", nargs="+", type=str, help="netCDF file to process") 
     parser.add_argument("--yaml", nargs="+", type=str, help="YAML file(s) to load")
-    parser.add_argument("--meta", type=str, metavar="meta.csv", default="meta.csv", help="For Meta Group")
-    parser.add_argument("--wave", type=str, metavar="wave.csv", default="wave.csv", help="For Wave Group")
-    parser.add_argument("--xyz", type=str, metavar="acceleration.csv", default="acceleration.csv", help="For XYZ Group")
-    parser.add_argument("--group", type=str, action="append", required=True, choices=("Meta", "Wave", "XYZ"), help="Enter Meta, Wave or XYZ")
     args = parser.parse_args(raw_args)
 
     # for each nc filename passed
