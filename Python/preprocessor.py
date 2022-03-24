@@ -27,7 +27,7 @@ def parse_csv(fn: str, output: str):
         ds.to_netcdf(output, 'w', format='NETCDF4') # constructs an nc file
 
     # reads csv file, stores it in a dataframe then into a nc file
-    data = pd.read_csv(fn)
+    data = pd.read_csv(fn)    
     return xr.Dataset.from_dataframe(data) # format and stores csv file into dataset
      
 
@@ -49,50 +49,33 @@ def store_data(args: ArgumentParser) -> None:
         tlow = wave.time_lower.to_numpy()
         tup = wave.time_upper.to_numpy()
         TimeBounds = np.vstack((tlow, tup)).T
-        wave["TimeBounds"] = pr.merge(TimeBounds)
+        
+        wave["TimeBounds"] = xr.DataArray(data=TimeBounds, dims=["t", "bounds"])
+        
+
 
         #construct frequency bounds and bandwidth
         freq = parse_csv(args.freq, output_name)
+        
         flow = freq.fLower.to_numpy()
         fup = freq.fUpper.to_numpy()
         FreqBounds = np.vstack((flow, fup)).T
+        FreqBounds = xr.DataArray(data=FreqBounds, dims=["f", "bounds"])
+        Bandwidth = freq.Bandwidth.to_numpy()
 
         #add frequency bounds to wave
-        wave["FreqBounds"] = pr.merge(FreqBounds)
-        wave["Bandwidth"] = freq.Bandwidth
+        wave["FreqBounds"] = FreqBounds
+        wave["Bandwidth"] = Bandwidth
         
         wave.to_netcdf(output_name, mode="a", group="Wave", engine="netcdf4")
+
+
     if ("XYZ" in args.group):
+        
         xyz = parse_csv(args.xyz, output_name)
+        xyz["SampleRate"] = meta["SampleRate"][0]
         xyz.to_netcdf(output_name, mode="a", group="XYZ", engine="netcdf4")
     
-
-"""
-Stores acceleration data in nc file
-"""
-def acceleration_XYZ(fn: str, args: ArgumentParser) -> None:
-    substring = "_output.nc"
-    # if ("XYZ" in args.group): # prevents a clash if acc XYZ is already written in
-    #     print("Already exists!")
-    #     return 
-
-    xyz_xr = xr.open_dataset(args.nc[0], group="XYZ")
-    frequency = float(xyz_xr.SampleRate)
-
-    data = Data(args.nc[0])
-    # # calculates for acceleration and stores in XYZ
-    ds = xr.Dataset(
-        data_vars=dict(
-            x=(("time",), calcAcceleration(data["TXYZ"]["x"], frequency), {"units": "m/s^2"}),
-            y=(("time",), calcAcceleration(data["TXYZ"]["y"], frequency), {"units": "m/s^2"}),
-            z=(("time",), calcAcceleration(data["TXYZ"]["z"], frequency), {"units": "m/s^2"}),
-            ),
-        attrs=dict(
-            comment="Acceleration Values",
-            ),
-        )
-    ds.to_netcdf(output(args, substring), mode="a", group="XYZ") # writes acceleration data to nc file
-
 
 def main(raw_args=None):
     # command line stuff
@@ -113,7 +96,6 @@ def main(raw_args=None):
 
     # for each nc filename passed
     for fn in args.nc:
-        # acceleration_XYZ(fn, args)
         store_data(args)
                 
 

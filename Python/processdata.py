@@ -253,10 +253,14 @@ def welchCalc(PSD: dict, Data: dict) -> dict:
 
 
 def bandedCalc(PSD: dict, Data: dict):
+    
 
      # non directional
     a0 = PSD["zz"] / np.square(np.square(2 * np.pi * PSD["freq_space"]))
+    
     m0 = (a0 * Data["Wave"]["Bandwidth"]).sum()
+
+    
     m1 = (a0*PSD["freq_space"]*Data["Wave"]["Bandwidth"]).sum()
     mm1 = (a0/PSD["freq_space"]*Data["Wave"]["Bandwidth"]).sum()
     te = mm1/m0  # mean energy period

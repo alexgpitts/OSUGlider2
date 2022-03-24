@@ -27,7 +27,8 @@ def process(filename: str, args: ArgumentParser) -> None:
     substring = "_processed.nc"
     nc4.Dataset(output(args, substring), 'w', format='NETCDF4') # constructs an nc file
     
-    data = gd.Data(filename)
+    data = gd.Data(filename, args.cdip)
+    
     
     time = data["XYZ"]["t"]
     timebounds = data["Wave"]["Timebounds"]
@@ -100,6 +101,7 @@ def process(filename: str, args: ArgumentParser) -> None:
 
             "freq_space": np.fft.rfftfreq(acc["z"].size, 1/data["Meta"]["frequency"])
         }
+        
 
         # calculate PSD on output from welch method FFT
         wPSD = {
@@ -122,6 +124,7 @@ def process(filename: str, args: ArgumentParser) -> None:
         count = freq_select.sum(axis=1)
         window_type = "boxcar"
         windowing_method = pr.Bias(len(PSD["freq_space"]), window_type)
+        
 
         # calculate PSD on With banded method
         bPSD = {
@@ -135,6 +138,7 @@ def process(filename: str, args: ArgumentParser) -> None:
 
             "freq_space": freq_midpoints
         }
+    
 
         # append PSDs
         PSDs.append(PSD)
@@ -145,7 +149,7 @@ def process(filename: str, args: ArgumentParser) -> None:
         # calculation
         #################################
 
-        if(any(i > 500 for i in acc["x"]) or any(i > 500 for i in acc["y"]) or any(i > 500 for i in acc["z"])):
+        if(any(i > 100 for i in abs(acc["x"])) or any(i > 100 for i in abs(acc["y"])) or any(i > 100 for i in abs(acc["z"]))):
             print(f"block {i}:  bad data containing extremely large values")
             wCalcs.append(pr.errorCalc(len(wPSD["freq_space"])))     
             bCalcs.append(pr.errorCalc(len(freq_midpoints)))    
@@ -190,8 +194,10 @@ def main(raw_args=None):
     grp = parser.add_mutually_exclusive_group()
     
     # required
+    parser.add_argument("--cdip", action="store_true", help="to choose if we are working with cdip data")
     parser.add_argument("nc", nargs="+", type=str, help="netCDF file to process") 
     parser.add_argument("--yaml", nargs="+", type=str, help="YAML file(s) to load")
+    
     args = parser.parse_args(raw_args)
 
     # for each nc filename passed

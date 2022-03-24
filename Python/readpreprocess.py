@@ -27,7 +27,7 @@ def process(filename: str, args: ArgumentParser) -> None:
     wave_xr = xr.open_dataset(filename, group="Wave")
     print("Wave\n", wave_xr, "\n\n")
 
-    
+    print(wave_xr.FreqBounds)
     
     
 

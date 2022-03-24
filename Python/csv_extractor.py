@@ -20,7 +20,7 @@ import csv
 def process(filename: str, args: ArgumentParser) -> None:
 
     
-    data = gd.Data(filename)
+    data = gd.Data(filename, args.cdip)
     
     
     wave_name = gd.output(args, "_wave.csv")
@@ -52,13 +52,10 @@ def process(filename: str, args: ArgumentParser) -> None:
     # write the xyz data from XYZ group to xyz_acc.csv
     with open(xyz_name, 'w', newline='') as f: 
         writer = csv.writer(f)
-        header = ['t','x','y','z','SampleRate']
+        header = ['t','x','y','z']
         writer.writerow(header)
-        x = gd.calcAcceleration(data["XYZ"]["x"], data["Meta"]["frequency"])
-        y = gd.calcAcceleration(data["XYZ"]["x"], data["Meta"]["frequency"])
-        z = gd.calcAcceleration(data["XYZ"]["x"], data["Meta"]["frequency"])
         for i in range(len(data["XYZ"]["t"])):
-            row = [data["XYZ"]["t"][i], x[i], y[i], z[i], data["Meta"]["frequency"]]
+            row = [data["XYZ"]["t"][i], data["XYZ"]["x"][i], data["XYZ"]["y"][i], data["XYZ"]["z"][i]]
             writer.writerow(row)
 
     # write the frequency bound data from FreqBounds to freq.csv
@@ -79,7 +76,7 @@ def main(raw_args=None):
     # command line stuff
     parser = ArgumentParser()
     grp = parser.add_mutually_exclusive_group()
-    
+    parser.add_argument("--cdip", action="store_true", help="to choose if we are working with cdip data")
     # required
     parser.add_argument("nc", nargs="+", type=str, help="netCDF file to process") 
     

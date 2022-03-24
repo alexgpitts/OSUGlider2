@@ -25,7 +25,7 @@ def calcAcceleration(x: np.array, fs: float) -> np.array:
     dx2[0:2] = dx2[2]
     return dx2 * fs * fs
 
-def Data(filename) -> dict:
+def Data(filename: str, cdip: bool) -> dict:
     """Master data reading function. Reads the .nc file from CDIP.
     The data is stored in dictionary (data), which contains many dictionaries 
     to hold information. Examples include: acceleration data, frequency bounds, etc."""
@@ -47,22 +47,8 @@ def Data(filename) -> dict:
             "longitude": float(meta_xr.DeployLongitude),
             "depth": float(meta_xr.WaterDepth),
             "declination": float(meta_xr.Declination)
-        },
-        
-        # "XYZ": {
-        #     "t": xyz_xr.t.to_numpy(),
-        #     "x": calcAcceleration(xyz_xr.x.to_numpy(), frequency),
-        #     "y": calcAcceleration(xyz_xr.y.to_numpy(), frequency),
-        #     "z": calcAcceleration(xyz_xr.z.to_numpy(), frequency),
-        # },
-
-        "XYZ": {
-            "t": xyz_xr.t.to_numpy(),
-            "x": xyz_xr.x.to_numpy(),
-            "y": xyz_xr.y.to_numpy(),
-            "z": xyz_xr.z.to_numpy()
-        },
-        
+        },    
+          
         "Wave": {
             "Timebounds": wave_xr.TimeBounds.to_numpy(),
             "time_lower": wave_xr.TimeBounds[:, 0].to_numpy(),
@@ -78,6 +64,25 @@ def Data(filename) -> dict:
             "joint": wave_xr.FreqBounds[:, :].to_numpy()
         }
     }
+
+  
+
+    if cdip:
+        data["XYZ"] = {
+            "t": xyz_xr.t.to_numpy(),
+            "x": calcAcceleration(xyz_xr.x.to_numpy(), frequency),
+            "y": calcAcceleration(xyz_xr.y.to_numpy(), frequency),
+            "z": calcAcceleration(xyz_xr.z.to_numpy(), frequency)
+        }
+        print("in CDIP")
+    else:
+        data["XYZ"] = {
+            "t": xyz_xr.t.to_numpy(),
+            "x": xyz_xr.x.to_numpy(),
+            "y": xyz_xr.y.to_numpy(),
+            "z": xyz_xr.z.to_numpy()
+        }
+    
     
 
     return data
