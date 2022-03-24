@@ -15,6 +15,7 @@ These programs serve as a data processing pipeline
 
 4) Testing (Optional): <br />
 &nbsp;-Compare non-directional data of the fully processed file with CDIPs original file<br /> 
-> python .\tests\test_non_directional_values.py --graph ".\ncFiles\067.20220102_0000.20220102_0600_output_processed.nc" ".\ncFiles\067.20220102_0000.20220102_0600.nc"<br />
+> python .\tests\test_non_directional_values.py --graph ".\ncFiles\067.20220102_0000.20220102_0600_output_processed.nc" ".\ncFiles\067.20220102_0000.20220102_0600.nc"
+
 &nbsp;-Compare directional spectra of the fully processed file with CDIPs original file<br /> 
-> python .\tests\test_directional_values.py --graph ".\ncFiles\067.20201225_1200.20201225_1600_output_processed.nc" ".\ncFiles\067.20201225_1200.20201225_1600.nc"<br />
+> python .\tests\test_directional_values.py --graph ".\ncFiles\067.20201225_1200.20201225_1600_output_processed.nc" ".\ncFiles\067.20201225_1200.20201225_1600.nc"
