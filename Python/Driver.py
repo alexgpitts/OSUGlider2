@@ -24,8 +24,9 @@ def __process(fn: str, args: ArgumentParser) -> None:
 
 def process(filename: str, args: ArgumentParser) -> None:
     # A function in getdata has this implemented so it can be pull in other files and reduce repeated code
-    # nc4.Dataset(output(args), 'w', format='NETCDF4') # constructs an nc file
-
+    substring = "_processed.nc"
+    nc4.Dataset(output(args, substring), 'w', format='NETCDF4') # constructs an nc file
+    
     data = gd.Data(filename)
     
     time = data["XYZ"]["t"]
@@ -158,26 +159,26 @@ def process(filename: str, args: ArgumentParser) -> None:
 
     # PSDs and CSDs with normal calculation method
     PSD_Norm = pr.formatPSD(PSDs)
-    xr.Dataset(PSD_Norm).to_netcdf(output(args), mode="a", group="PSD")
+    xr.Dataset(PSD_Norm).to_netcdf(output(args, substring), mode="a", group="PSD")
 
     # PSDs and CSDs with Welch calculation method
     wPSD_Welch = pr.formatPSD(wPSDs)
-    xr.Dataset(wPSD_Welch).to_netcdf(output(args), mode="a", group="WelchPSD")
+    xr.Dataset(wPSD_Welch).to_netcdf(output(args, substring), mode="a", group="WelchPSD")
 
     # PSDs and CSDs with banding calculation method
     bPSD_Banded = pr.formatPSD(bPSDs)
-    xr.Dataset(bPSD_Banded).to_netcdf(output(args), mode="a", group="BandedPSD")
+    xr.Dataset(bPSD_Banded).to_netcdf(output(args, substring), mode="a", group="BandedPSD")
   
     # PSDs and CSDs with banded welch calculation method
     # comming soon...
 
     # calculations using welchPSD
     calcs_welch = pr.formatCalc(wCalcs)
-    xr.Dataset(calcs_welch).to_netcdf(output(args), mode="a", group="WelchWave")
+    xr.Dataset(calcs_welch).to_netcdf(output(args, substring), mode="a", group="WelchWave")
     
     # calculations using BandedPSD
     calcs_banded = pr.formatCalc(bCalcs)
-    xr.Dataset(calcs_banded).to_netcdf(output(args), mode="a", group="BandedWave")
+    xr.Dataset(calcs_banded).to_netcdf(output(args, substring), mode="a", group="Wave")
 
     # calculations using BandedWelchPSD
     # comming soon

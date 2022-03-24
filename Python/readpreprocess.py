@@ -18,16 +18,17 @@ import xarray as xr
 def process(filename: str, args: ArgumentParser) -> None:
 
     # normal
-    PSD_xr = xr.open_dataset(filename, group="PSD")
-    print("PSD\n", PSD_xr, "\n\n")
-    
-    # welch
-    wPSD_xr = xr.open_dataset(filename, group="WelchPSD")
-    print("Welch PSD\n", wPSD_xr, "\n\n")
+    meta_xr = xr.open_dataset(filename, group="Meta")
+    print("Meta\n", meta_xr, "\n\n")
 
-    # banded
-    bPSD_xr = xr.open_dataset(filename, group="BandedPSD")
-    print("Banded PSD\n", bPSD_xr, "\n\n")
+    XYZ_xr = xr.open_dataset(filename, group="XYZ")
+    print("XYZ\n", XYZ_xr, "\n\n")
+
+    wave_xr = xr.open_dataset(filename, group="Wave")
+    print("Wave\n", wave_xr, "\n\n")
+
+    
+    
     
 
 

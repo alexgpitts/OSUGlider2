@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
-def output(args: ArgumentParser) -> str:
+def output(args: ArgumentParser, substring: str) -> str:
     folder_name = os.path.split(args.nc[0])[0]
-    output_name = os.path.splitext(os.path.basename(args.nc[0]))[0] + "_output.nc"
+    output_name = os.path.splitext(os.path.basename(args.nc[0]))[0] + substring
     output_dir = os.path.join(folder_name, output_name)
     return output_dir
 
@@ -33,8 +33,10 @@ def Data(filename) -> dict:
     meta_xr = xr.open_dataset(filename, group="Meta")  # For water depth
     wave_xr = xr.open_dataset(filename, group="Wave")
     xyz_xr = xr.open_dataset(filename, group="XYZ")
-
-    frequency = float(xyz_xr.SampleRate)
+    try:
+        frequency = float(xyz_xr.SampleRate)
+    except:
+        frequency = float(xyz_xr.SampleRate[0])
 
     # read in the meta, xyz, and wave groups
     data = {
@@ -47,26 +49,28 @@ def Data(filename) -> dict:
             "declination": float(meta_xr.Declination)
         },
         
+        # "XYZ": {
+        #     "t": xyz_xr.t.to_numpy(),
+        #     "x": calcAcceleration(xyz_xr.x.to_numpy(), frequency),
+        #     "y": calcAcceleration(xyz_xr.y.to_numpy(), frequency),
+        #     "z": calcAcceleration(xyz_xr.z.to_numpy(), frequency),
+        # },
+
         "XYZ": {
             "t": xyz_xr.t.to_numpy(),
-            "x": calcAcceleration(xyz_xr.x.to_numpy(), frequency),
-            "y": calcAcceleration(xyz_xr.y.to_numpy(), frequency),
-            "z": calcAcceleration(xyz_xr.z.to_numpy(), frequency),
-        },
-
-        "TXYZ": {
             "x": xyz_xr.x.to_numpy(),
             "y": xyz_xr.y.to_numpy(),
             "z": xyz_xr.z.to_numpy()
         },
         
         "Wave": {
-            "Timebounds": wave_xr.TimeBounds,
-            "time_lower": wave_xr.TimeBounds[:, 0],
-            "time_upper": wave_xr.TimeBounds[:, 1],
-            "FreqBounds": wave_xr.FreqBounds,
+            "Timebounds": wave_xr.TimeBounds.to_numpy(),
+            "time_lower": wave_xr.TimeBounds[:, 0].to_numpy(),
+            "time_upper": wave_xr.TimeBounds[:, 1].to_numpy(),
+            "FreqBounds": wave_xr.FreqBounds.to_numpy(),
             "Bandwidth": wave_xr.Bandwidth.to_numpy()
         },
+        
 
         "Freq": {
             "lower": wave_xr.FreqBounds[:, 0].to_numpy(),
@@ -74,5 +78,6 @@ def Data(filename) -> dict:
             "joint": wave_xr.FreqBounds[:, :].to_numpy()
         }
     }
+    
 
     return data
