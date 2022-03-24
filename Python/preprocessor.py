@@ -44,10 +44,23 @@ def store_data(args: ArgumentParser) -> None:
         meta.to_netcdf(output_name, mode="a", group="Meta", engine="netcdf4")
     if ("Wave" in args.group):
         wave = parse_csv(args.wave, output_name)
+
+        # construct array of timebounds
         tlow = wave.time_lower.to_numpy()
         tup = wave.time_upper.to_numpy()
         TimeBounds = np.vstack((tlow, tup)).T
         wave["TimeBounds"] = pr.merge(TimeBounds)
+
+        #construct frequency bounds and bandwidth
+        freq = parse_csv(args.freq, output_name)
+        flow = freq.fLower.to_numpy()
+        fup = freq.fUpper.to_numpy()
+        FreqBounds = np.vstack((flow, fup)).T
+
+        #add frequency bounds to wave
+        wave["FreqBounds"] = pr.merge(FreqBounds)
+        wave["Bandwidth"] = freq.Bandwidth
+        
         wave.to_netcdf(output_name, mode="a", group="Wave", engine="netcdf4")
     if ("XYZ" in args.group):
         xyz = parse_csv(args.xyz, output_name)
@@ -88,11 +101,13 @@ def main(raw_args=None):
     meta = "./ncFiles/067.20201225_1200.20201225_1600_meta.csv"
     wave = "./ncFiles/067.20201225_1200.20201225_1600_wave.csv"
     xyz = "./ncFiles/067.20201225_1200.20201225_1600_xyz.csv"
+    freq = "./ncFiles/067.20201225_1200.20201225_1600_freq.csv"
     # required
     parser.add_argument("nc", nargs="+", type=str, help="netCDF file to process") 
     parser.add_argument("--meta", type=str, metavar="meta.csv", default=meta, help="For Meta Group")
     parser.add_argument("--wave", type=str, metavar="wave.csv", default=wave, help="For Wave Group")
     parser.add_argument("--xyz", type=str, metavar="acceleration.csv", default=xyz, help="For XYZ Group")
+    parser.add_argument("--freq", type=str, metavar="freq.csv", default=freq, help="For freq bounds")
     parser.add_argument("--group", type=str, action="append", required=False, choices=("Meta", "Wave", "XYZ"), help="Enter Meta, Wave or XYZ")
     args = parser.parse_args(raw_args)
 

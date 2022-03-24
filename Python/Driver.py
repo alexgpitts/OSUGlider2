@@ -47,8 +47,8 @@ def process(filename: str, args: ArgumentParser) -> None:
 
     for i in range(len(timebounds)):
             
-        time_lower = data["Wave"]["time_lower"].to_numpy()[i]
-        time_upper = data["Wave"]["time_upper"].to_numpy()[i]
+        time_lower = data["Wave"]["time_lower"][i]
+        time_upper = data["Wave"]["time_upper"][i]
 
         # bit mask so as to select only within the bounds of one lower:upper range pair
         select = np.logical_and(

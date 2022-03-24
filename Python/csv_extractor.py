@@ -26,6 +26,8 @@ def process(filename: str, args: ArgumentParser) -> None:
     wave_name = gd.output(args, "_wave.csv")
     meta_name = gd.output(args, "_meta.csv")
     xyz_name = gd.output(args, "_xyz.csv")
+    freq_name = gd.output(args, "_freq.csv")
+
     # write the time bounds from wave group to wave.csv
     with open(wave_name, 'w', newline='') as f: 
         writer = csv.writer(f)
@@ -60,17 +62,17 @@ def process(filename: str, args: ArgumentParser) -> None:
             writer.writerow(row)
 
     # write the frequency bound data from FreqBounds to freq.csv
-    # coming soon...
-    # with open(xyz_name, 'w', newline='') as f: 
-    #     writer = csv.writer(f)
-    #     header = ['t','x','y','z','SampleRate']
-    #     writer.writerow(header)
-    #     x = gd.calcAcceleration(data["XYZ"]["x"], data["Meta"]["frequency"])
-    #     y = gd.calcAcceleration(data["XYZ"]["x"], data["Meta"]["frequency"])
-    #     z = gd.calcAcceleration(data["XYZ"]["x"], data["Meta"]["frequency"])
-    #     for i in range(len(data["XYZ"]["t"])):
-    #         row = [data["XYZ"]["t"][i], x[i], y[i], z[i], data["Meta"]["frequency"]]
-    #         writer.writerow(row)
+    with open(freq_name, 'w', newline='') as f: 
+        writer = csv.writer(f)
+        header = ['Bandwidth','fLower','fUpper']
+        writer.writerow(header)
+        for i in range(len(data["Wave"]["Bandwidth"])):
+            row = [data["Wave"]["Bandwidth"][i], 
+                data["Wave"]["FreqBounds"][i][0],
+                data["Wave"]["FreqBounds"][i][1]]
+            writer.writerow(row)
+        
+        
     
 
 def main(raw_args=None):
