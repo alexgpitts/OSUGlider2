@@ -28,6 +28,9 @@ def process(filename: str, args: ArgumentParser) -> None:
     xyz_name = gd.output(args, "_xyz.csv")
     freq_name = gd.output(args, "_freq.csv")
 
+    print(wave_name)
+
+
     # write the time bounds from wave group to wave.csv
     with open(wave_name, 'w', newline='') as f: 
         writer = csv.writer(f)
