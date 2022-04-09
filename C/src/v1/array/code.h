@@ -69,6 +69,30 @@ Index Mul(Index s_r_a, Index s_r_b, Index t_r) {
 	return t_r;
 }
 
+Index ComplexMul(Index s_r_a, Index s_r_b, Index t_r) {
+	// C128 C = {0};
+
+	// C.real = (A.real * B.real) - (A.imag * B.imag);
+	// C.imag = (A.real * B.imag) + (A.imag * B.real);
+
+	// return C;
+
+	C64 A = {0};
+	C64 B = {0};
+	C64 C = {0};
+	for (Index c = 0; c < COLS/2; c++) {
+		A = (((C64*) Table[s_r_a])[c]);
+		B = (((C64*) Table[s_r_b])[c]);
+		C.real = (A.real * B.real) - (A.imag * B.imag);
+		C.imag = (A.real * B.imag) + (A.imag * B.real);
+
+		((C64*) Table[t_r])[c] = C;
+	}
+	return t_r;
+}
+
+
+
 Index Div(Index s_r_a, Index s_r_b, Index t_r) {
 	for (Index c = 0; c < COLS; c++) {
 		Table[t_r][c] = Table[s_r_a][c]/Table[s_r_b][c];

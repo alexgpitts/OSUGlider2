@@ -51,7 +51,7 @@ Index CalcPSD(
    //  qOdd = nfft % 2
    //  n = (nfft - qOdd) * 2  # Number of data points input to FFT
    //  w = Bias(n, window)  # Get the window used
-   //  wSum = (w * w).sum()
+   //  wSum = (w * w).sum()		// 1*1 ??
    //  psd = (xFFT.conjugate() * yFFT) / (fs * wSum)
    //  if not qOdd:       # Even number of FFT bins
    //      psd[1:] *= 2   # Real FFT -> double for non-zero freq
@@ -63,9 +63,9 @@ Index CalcPSD(
 	UZ wSum = COLS;
 
 
-	
+	// ComplexMul(ComplexConj(s_r_x, t_r), s_r_y, t_r);
 	Scale((1. / (freq*wSum)),
-		Mul(ComplexConj(s_r_x, t_r), s_r_y, t_r), t_r);
+		ComplexMul(ComplexConj(s_r_x, t_r), s_r_y, t_r), t_r);
 
 	C64 first = ((C64*) Table[t_r])[0];	// save the first val
 	Scale(2, t_r, t_r);

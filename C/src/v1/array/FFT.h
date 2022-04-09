@@ -145,6 +145,10 @@ void transform(C128* f, C128*W, int N) {
 		n *= 2;
 		a = a / 2;
 	}
+
+	// fix missing complex val... I don't know why this works... soooo... :D
+	// printf(">> %d %f %f\n", N, f[0].real, f[N/2].real);
+	f[0].imag = f[N/2].real;
 }
 
 // void FFT(C128* f, int N, double d) {
