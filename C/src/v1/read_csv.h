@@ -11,10 +11,13 @@ char buffer[MAX_LINE] = {0};
 #define TOKEN_MAX 10
 char tokens[TOKEN_MAX][MAX_LINE] = {0};
 
+
 void read_csv
 (	char*filename
 // ,	XYZ xyz
 )	{
+
+	UZ skip_lines = 1;
 
 	FILE*file = fopen(filename, "r");
 	if (!file) {
@@ -35,7 +38,14 @@ void read_csv
 			case '\n':
 				T = 0;
 				C = 0;
-			goto NEXT_LINE;
+				if (skip_lines > 0) {
+					skip_lines--;
+					goto SKIP;
+				}
+				else {
+					goto NEXT_LINE;
+				}
+			break;
 
 			case ' ': case '\t':
 			case '\r':
@@ -57,17 +67,20 @@ void read_csv
 		// skip timestamp
 
 		for (UZ i = 1; i < TOKEN_MAX; i++) {
-
 			Table[i][col] = (float) atof(tokens[i]);
-			// printf("%.15lF %s\n", atof(tokens[i]), tokens[i]);
+			// printf("%s %f\n", tokens[i], Table[i][col]);
 		}
 
 		col += 1;
 
+		SKIP:
 		if (col >= COLS) {
 			break;
 		}
 		memset(buffer, 0, MAX_LINE);
+		for (UZ i = 0; i < TOKEN_MAX; i++) {
+			memset(tokens[i], 0, MAX_LINE);
+		}
 	}
 
 

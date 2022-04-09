@@ -23,7 +23,8 @@ int main(int argc, char const *argv[]) {
 	,	POS(0,20))
 	;
 	
-	read_csv("./acc.csv");
+	// read_csv("./acc.csv");
+	read_csv("./067.20201225_1200.20201225_1600_xyz.csv");
 
 	process();
 

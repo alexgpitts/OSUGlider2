@@ -11,4 +11,4 @@
 
 F32 Table[ROWS][COLS] = {0};
 
-C64 xTable[ROWS][COLS] = {0};
+// C64 xTable[ROWS][COLS] = {0};
