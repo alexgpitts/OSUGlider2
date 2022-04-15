@@ -1,5 +1,7 @@
 # Ocean wave measurements (Python Implementation)
 
+This is legacy code our team used for research on how to calculate things from CDIP files. THe program takes in a CDIP .NC file and process it with various calculation methods.
+
 This program needs numpy, matplotlib, netCDF4, and xarray installed to run. To display different graphs, change the plotting perimeter boolean values towards the top of the driver file.
 
 This file takes command lines<br /> 
