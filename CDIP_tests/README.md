@@ -1,4 +1,4 @@
-# Ocean wave measurements (Python Implementation)
+# Ocean wave measurements (CDIP Testing environment)
 
 This is legacy code our team used for research on how to calculate things from CDIP files. THe program takes in a CDIP .NC file and process it with various calculation methods.
 
