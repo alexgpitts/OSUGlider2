@@ -1,4 +1,4 @@
-# Overview
+# Ocean wave measurements (Python Implementation)
 This is the python portion of our project. These programs serve as a data processing pipeline. 
 
 ## Prerequisites 
