@@ -13,6 +13,9 @@ Python, numpy, pandas, matplotlib, xarray, and netCDF4
 
 `getdata.py` and `precessdata.py`: These two programs are helper functions for the Driver.py program. They have various functions reguarding extracting the data from the source .NC file and calculating all our coefficients<br />
 
+`tests\test_non_directional_values.py` and `tests\test_directional_values.py`: These two programs are testing functions for Driver.py's results. Given a .NC file from CDIP, and the resulting .NC file from Driver.py, we can compare our calculations with CDIP. <br />
+
+
 ## Tutorial:
 1) Extract CSV files from CDIP NC file with csv_extractor.py (optional if we are working with cdip data)<br /> 
 &nbsp;-This creates several CSV files which simulates what we would get from the glider<br /> 
