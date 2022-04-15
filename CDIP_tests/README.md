@@ -25,5 +25,6 @@ Some of our next steps:
 2) Create a testing suite for running large amounts of CDIP data through the program. 
 
 
-Example Output:  
+Example Output: `python .\cdip_driver.py --banding --graph --raw --norm --ds ".\ncFiles\067.20201225_1200.20201225_1600.nc"`
 ![builds](../ProjectImages/python_output.png?raw=true)
+Alternativly to run welch method: `python .\cdip_driver.py --welch --hann --raw --norm --ds --graph ".\ncFiles\067.20201225_1200.20201225_1600.nc"`  

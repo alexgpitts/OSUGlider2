@@ -261,7 +261,7 @@ def process(fn: str, args: ArgumentParser) -> None:
                 "a2": (Band["xx"] - Band["yy"]) / denom,
                 "b2": -2 * Band["xy"].real / denom,
             }
-            datasets.append(xr.Dataset(outputs[i]["welch"]))
+            datasets.append(xr.Dataset(outputs[i]["banded"]))
             print("Calculated Data using Banding and \"{0}\" window: ".format(
                 window_type))
             for j in outputs[i]["banded"]:
