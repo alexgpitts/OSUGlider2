@@ -8,6 +8,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+#define M_PI 3.1415926535897932384
 
 #define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__})/sizeof(int))
 #define SUM(...)  (sum(NUMARGS(__VA_ARGS__), __VA_ARGS__))

@@ -9,26 +9,26 @@
 
 int main(int argc, char const *argv[]) {
 
-	Coord e =
-	INC(1,
-		FOLD(ADD,
-			Reciprocal(
-				Scan(MUL,
-					Inc(1
-					,	Iota(ROW(20))
-					,	ROW(20))
-				,	ROW(20))
-			,	ROW(20))
-		,	POS(0,20))
-	,	POS(0,20))
-	;
+	// Coord e =
+	// INC(1,
+	// 	FOLD(ADD,
+	// 		Reciprocal(
+	// 			Scan(MUL,
+	// 				Inc(1
+	// 				,	Iota(ROW(20))
+	// 				,	ROW(20))
+	// 			,	ROW(20))
+	// 		,	ROW(20))
+	// 	,	POS(0,20))
+	// ,	POS(0,20))
+	// ;
 	
 	// read_csv("./acc.csv");
 	read_csv("./067.20201225_1200.20201225_1600_xyz.csv");
 
 	process();
 
-	print_tab(20, ROWS);
+	print_tab(20, 41);
 	return 0;
 }
 

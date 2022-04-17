@@ -2,9 +2,9 @@
 
 #include "../common.h"
 
-#define POW_OF_2 4
+#define POW_OF_2 5
 
-#define ROWS 32
+#define ROWS 64
 #define COLS (1<<POW_OF_2)
 // #define COLS (10)
 
