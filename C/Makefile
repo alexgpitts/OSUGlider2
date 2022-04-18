@@ -3,7 +3,7 @@
 # -fshort-enums is critial, otherwise enums will be integer sized
 
 all:
-	gcc -std=c17 -Wno-unused-variable -Wall ./main.c -g -o ./build/main -lm
+	gcc -std=c11 -Wno-unused-variable -Wall ./main.c -g -o ./build/main -lm
 	./build/main
 
 # all:
