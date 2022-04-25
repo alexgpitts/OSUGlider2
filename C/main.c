@@ -28,7 +28,7 @@ int main(int argc, char const *argv[]) {
 
 	process();
 
-	print_tab(20, 41);
+	print_table(20, 41);
 	return 0;
 }
 

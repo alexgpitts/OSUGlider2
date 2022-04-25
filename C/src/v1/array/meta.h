@@ -9,7 +9,7 @@
 void print_val(Coord p);
 void print_row(Index r);
 
-void print_tab(Index, Index);
+void print_table(Index, Index);
 void print_col_headers(Index);
 void print_line();
 void print_line2();
@@ -28,7 +28,7 @@ void print_row(Index r) {
 	printf("│\n");
 }
 
-void print_tab(Index max_cols, Index max_rows) {
+void print_table(Index max_cols, Index max_rows) {
 	for (Index k = 0; k < COLS && k < max_cols; k+=WIDTH) {
 		print_line2();
 		print_col_headers(k);

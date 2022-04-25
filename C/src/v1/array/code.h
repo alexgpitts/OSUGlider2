@@ -5,7 +5,7 @@
 #include "FFT.h"
 
 
-// typedef Index (*OP2)(Index a, Index b, Index z);
+
 
 typedef enum { ADD, SUB, DIV, MUL } Op;
 
