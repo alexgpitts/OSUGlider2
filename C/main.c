@@ -1,8 +1,13 @@
 
-#include "src/v1/array/data.h"
-#include "src/v1/array/code.h"
-#include "src/v1/array/meta.h"
-#include "src/v1/driver.h"
+// #include "src/v1/array/data.h"
+// #include "src/v1/array/code.h"
+// #include "src/v1/array/meta.h"
+// #include "src/v1/driver.h"
+
+#include "src/v2/array/data.h"
+#include "src/v2/array/code.h"
+#include "src/v2/array/meta.h"
+#include "src/v2/driver.h"
 
 
 // // .e r4 !! 1 + (*) // %%  (+) / 1 +
@@ -26,7 +31,14 @@ int main(int argc, char const *argv[]) {
 	// read_csv("./acc.csv");
 	read_csv("./067.20201225_1200.20201225_1600_xyz.csv");
 
-	process();
+	// process("./067.20201225_1200.20201225_1600_xyz.csv", INPUT_MAX);
+	process(
+		INPUT_MAX,
+		Input[0],
+		Input[1],
+		Input[2],
+		1.2799999713897705
+	);
 
 	print_table(20, 41);
 	return 0;

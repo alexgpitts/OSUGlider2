@@ -8,14 +8,14 @@
 #define MAX_LINE 1<<10
 char buffer[MAX_LINE] = {0};
 
-#define TOKEN_MAX 10
+
+#define SKIP_COLS 1
+
+#define TOKEN_MAX (INPUTS + SKIP_COLS)
 char tokens[TOKEN_MAX][MAX_LINE] = {0};
 
 
-void read_csv
-(	char*filename
-// ,	XYZ xyz
-)	{
+void read_csv(char*filename)	{
 
 	UZ skip_lines = 1;
 
@@ -65,17 +65,15 @@ void read_csv
 
 
 		// skip timestamp
-
-		for (UZ i = 1; i < TOKEN_MAX; i++) {
-			// printf("%d\n", i);
-			Table[i][col] = (float) atof(tokens[i]);
+		for (UZ i = SKIP_COLS; i < TOKEN_MAX; i++) {
+			Input[i-SKIP_COLS][col] = (float) atof(tokens[i]);
 			// printf("%s %f\n", tokens[i], Table[i][col]);
 		}
 
 		col += 1;
 
 		SKIP:
-		if (col >= COLS) {
+		if (col >= INPUT_MAX) {
 			break;
 		}
 		memset(buffer, 0, MAX_LINE);

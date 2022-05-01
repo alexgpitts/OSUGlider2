@@ -7,7 +7,8 @@
 #include "processdata.h"
 #include "array/FFT.h"
 
-void process() {
+void process(char* filename) {
+	read_csv(filename);
 
 	Index timespace = ROW(0);
 	// Scale(0.781250024, Iota(timespace), timespace);
@@ -23,6 +24,8 @@ void process() {
 	Rolling_mean(2, ROW(1), ROW(5));
 	Rolling_mean(2, ROW(2), ROW(6));
 	Rolling_mean(2, ROW(3), ROW(7));
+
+	// return;
 
 	// should be regular fft
 	// Index x_fft = meow_rFFT(ROW(5), ROW(9));
