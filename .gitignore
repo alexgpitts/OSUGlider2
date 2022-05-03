@@ -1,1 +1,6 @@
 .vscode
+*.csv
+Python/ncFiles/067.20201225_1200.20201225_1600_output.nc
+Python/ncFiles/067.20220102_0000.20220102_0600_output.nc
+Python/ncFiles/067.20201225_1200.20201225_1600_output_processed.nc
+Python/ncFiles/067.20220102_0000.20220102_0600_output_processed.nc

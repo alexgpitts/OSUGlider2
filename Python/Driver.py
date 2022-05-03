@@ -14,6 +14,9 @@ import os
 import processdata as pr
 import MyYAML as meta
 
+import warnings
+warnings.filterwarnings("error")
+
 # python .\Driver.py --group=Meta --group=Wave --group=XYZ '.\ncFiles\067.20201225_1200.20201225_1600.nc'
 # (at least 1 group has to be used) python .\Driver.py --yaml=meta.yaml --group=Wave '.\ncFiles\067.20201225_1200.20201225_1600.nc'
 
@@ -47,7 +50,7 @@ def process(filename: str, args: ArgumentParser) -> None:
     bCalcs = []     #banding method calculations
 
     for i in range(len(timebounds)):
-            
+        print(f"window {i}")
         time_lower = data["Wave"]["time_lower"][i]
         time_upper = data["Wave"]["time_upper"][i]
 
@@ -149,15 +152,24 @@ def process(filename: str, args: ArgumentParser) -> None:
         # calculation
         #################################
 
-        if(any(i > 100 for i in abs(acc["x"])) or any(i > 100 for i in abs(acc["y"])) or any(i > 100 for i in abs(acc["z"]))):
+        if(any(i > 100 for i in abs(acc["x"])) or 
+        any(i > 100 for i in abs(acc["y"])) or 
+        any(i > 100 for i in abs(acc["z"]))):
             print(f"block {i}:  bad data containing extremely large values")
             wCalcs.append(pr.errorCalc(len(wPSD["freq_space"])))     
             bCalcs.append(pr.errorCalc(len(freq_midpoints)))    
         else:
-            # welch method calculations
-            wCalcs.append(pr.welchCalc(wPSD, data))
-            # banding method calculations
-            bCalcs.append(pr.bandedCalc(bPSD, data))
+            try:
+                # welch method calculations
+                wCalcs.append(pr.welchCalc(wPSD, data))
+                # banding method calculations
+                bCalcs.append(pr.bandedCalc(bPSD, data))
+            except:
+                print(f"Error on window {i}")
+                wCalcs.append(pr.errorCalc(len(wPSD["freq_space"])))     
+                bCalcs.append(pr.errorCalc(len(freq_midpoints)))    
+                pass
+           
 
     #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using some type of custom dictionary merging functionl
 

@@ -110,7 +110,7 @@ def formatCalc(Data: dict)->dict:
         B1.append(Data[i]["B1"]) 
         A2.append(Data[i]["A2"]) 
         B2.append(Data[i]["B2"]) 
-
+   
     output = {
         "Hs": Hs,
         "Ta": Ta,  # average period
@@ -217,6 +217,7 @@ def welchCalc(PSD: dict, Data: dict) -> dict:
 
     # non directional
     a0 = PSD["zz"][1:] / np.square(np.square(2 * np.pi * PSD["freq_space"][1:]))
+    
     m0 = (a0 * PSD["freq_space"][1]).sum()
     m1 = (a0*PSD["freq_space"][1:]*PSD["freq_space"][1]).sum()
     mm1 = (a0/PSD["freq_space"][1:]*PSD["freq_space"][1]).sum()
@@ -247,7 +248,7 @@ def welchCalc(PSD: dict, Data: dict) -> dict:
         "A2": (PSD["xx"] - PSD["yy"]) / denom,
         "B2": -2 * PSD["xy"].real / denom,
     }
-
+    
     return output
 
 
@@ -269,12 +270,17 @@ def bandedCalc(PSD: dict, Data: dict):
     
     # directional
     denom = np.sqrt(PSD["zz"] * (PSD["xx"] + PSD["yy"]))
+    
     a1 = PSD["zx"].imag / denom
+    
+    
     b1 = -PSD["zy"].imag / denom
+    
     denom = PSD["xx"] + PSD["yy"]
-
+    
     dp = np.arctan2(b1[a0.argmax()], a1[a0.argmax()])  # radians
-
+    
+     
     output = {
         "Hs": 4 * np.sqrt(m0),
         "Ta": m0/m1,
