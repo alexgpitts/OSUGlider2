@@ -50,7 +50,7 @@ def process(filename: str, args: ArgumentParser) -> None:
     bCalcs = []     #banding method calculations
 
     for i in range(len(timebounds)):
-        print(f"window {i}")
+        # print(f"window {i}")
         time_lower = data["Wave"]["time_lower"][i]
         time_upper = data["Wave"]["time_upper"][i]
 
