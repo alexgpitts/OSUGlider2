@@ -2,7 +2,7 @@
 This is the python portion of our project. These programs serve as a data processing pipeline. 
 
 ## Prerequisites 
-Python, numpy, pandas, matplotlib, xarray, and netCDF4 
+Python 3.9.12, numpy, pandas, matplotlib, xarray, and netCDF4 
 
 ## File overview
 1) `csv_extractor.py`: Reads .NC file, outputs several CSV files. In order to get testing data, we can use .NC files from CDIP. This program extracts the raw acceleration data and other information to simulate what we would get from the gliders SD card. <br />

@@ -51,6 +51,8 @@ def process(args: ArgumentParser) -> None:
     }
     
     if(len(wWave["A1"])!=len(Wave["A1"])):
+        print(len(wWave["A1"]))
+        print(len(Wave["A1"]))
         print("error: non matching files")
         exit(1)
 
