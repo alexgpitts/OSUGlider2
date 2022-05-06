@@ -60,10 +60,19 @@ def process(filename: str, args: ArgumentParser) -> None:
             time <= time_upper
         )
         
-        averaging_window = 2
+        
 
         # select xyz data from block
-        acc = {
+        acc = { 
+            # x is northwards
+            "x": data["XYZ"]["x"][select],
+            # y is eastwards
+            "y": data["XYZ"]["y"][select],
+            # z is upwards
+            "z": data["XYZ"]["z"][select]
+        }
+        averaging_window = 2
+        acc2 = {
             # x is northwards
             "x": pr.Rolling_mean(data["XYZ"]["x"][select], averaging_window),
             # y is eastwards
@@ -71,16 +80,15 @@ def process(filename: str, args: ArgumentParser) -> None:
             # z is upwards
             "z": pr.Rolling_mean(data["XYZ"]["z"][select], averaging_window)
         }
-
         ################################# 
         # PSDs and CSDs
         #################################
 
         # preform FFT on block
         FFT = {
-            "x": np.fft.rfft(acc["x"], n=acc["z"].size),  # northwards
-            "y": np.fft.rfft(acc["y"], n=acc["z"].size),  # eastwards
-            "z": np.fft.rfft(acc["z"], n=acc["z"].size),  # upwards
+            "x": np.fft.rfft(acc2["x"], n=acc2["z"].size),  # northwards
+            "y": np.fft.rfft(acc2["y"], n=acc2["z"].size),  # eastwards
+            "z": np.fft.rfft(acc2["z"], n=acc2["z"].size),  # upwards
         }
 
         window_type = "hann"
@@ -169,7 +177,7 @@ def process(filename: str, args: ArgumentParser) -> None:
                 wCalcs.append(pr.errorCalc(len(wPSD["freq_space"])))     
                 bCalcs.append(pr.errorCalc(len(freq_midpoints)))    
                 pass
-           
+
 
     #next step write  PSDs, wPSDs, bPSDs, wCalcs, and bCalcs to netCDF file using some type of custom dictionary merging functionl
 

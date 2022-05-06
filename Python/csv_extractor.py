@@ -58,7 +58,13 @@ def process(filename: str, args: ArgumentParser) -> None:
         header = ['t','x','y','z']
         writer.writerow(header)
         for i in range(len(data["XYZ"]["t"])):
-            
+            # if(abs(data["XYZ"]["x"][i])>100):
+            #     data["XYZ"]["x"][i] = data["XYZ"]["x"][i-1]
+            # if(abs(data["XYZ"]["y"][i])>100):
+            #     data["XYZ"]["y"][i] = data["XYZ"]["y"][i-1]
+            # if(abs(data["XYZ"]["z"][i])>100):
+            #     data["XYZ"]["z"][i] = data["XYZ"]["z"][i-1]
+
             row = [data["XYZ"]["t"][i], data["XYZ"]["x"][i], data["XYZ"]["y"][i], data["XYZ"]["z"][i]]
             writer.writerow(row)
 
