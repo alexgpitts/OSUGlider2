@@ -93,7 +93,12 @@ def formatCalc(Data: dict)->dict:
     A1 = [] 
     B1 = [] 
     A2 = [] 
-    B2 = []     
+    B2 = [] 
+    index = []
+    A1_sigg = []
+    B1_sigg = []
+    A2_sigg = []
+    B2_sigg = []    
     
     for i in range (len(Data)):
         Hs.append(Data[i]["Hs"]) 
@@ -110,6 +115,11 @@ def formatCalc(Data: dict)->dict:
         B1.append(Data[i]["B1"]) 
         A2.append(Data[i]["A2"]) 
         B2.append(Data[i]["B2"]) 
+        index.append(Data[i]["index"])
+        A1_sigg.append(Data[i]["A1_sigg"])
+        B1_sigg.append(Data[i]["B1_sigg"])
+        A2_sigg.append(Data[i]["A2_sigg"])
+        B2_sigg.append(Data[i]["B2_sigg"])
    
     output = {
         "Hs": Hs,
@@ -125,7 +135,12 @@ def formatCalc(Data: dict)->dict:
         "A1": merge(A1),
         "B1": merge(B1),
         "A2": merge(A2),
-        "B2": merge(B2)
+        "B2": merge(B2),
+        "index": index,
+        "A1_sigg": A1_sigg,
+        "B1_sigg": B1_sigg,
+        "A2_sigg": A2_sigg,
+        "B2_sigg": B2_sigg
     }
 
     return output
@@ -211,6 +226,11 @@ def errorCalc(len: int) -> dict:
         "A2": np.zeros(len),
         "B2": np.zeros(len)
     }
+    output["index"] = np.NAN
+    output["A1_sigg"] = np.NAN
+    output["B1_sigg"] = np.NAN
+    output["A2_sigg"] = np.NAN
+    output["B2_sigg"] = np.NAN
     return output
 
 def welchCalc(PSD: dict, Data: dict) -> dict:
@@ -248,6 +268,13 @@ def welchCalc(PSD: dict, Data: dict) -> dict:
         "A2": (PSD["xx"] - PSD["yy"]) / denom,
         "B2": -2 * PSD["xy"].real / denom,
     }
+    index = a0.argmax()
+
+    output["index"] = a0.argmax()
+    output["A1_sigg"] = output["A1"][index]
+    output["B1_sigg"] = output["B1"][index]
+    output["A2_sigg"] = output["A2"][index]
+    output["B2_sigg"] = output["B2"][index]
     
     return output
 
@@ -255,7 +282,6 @@ def welchCalc(PSD: dict, Data: dict) -> dict:
 
 def bandedCalc(PSD: dict, Data: dict):
     
-
      # non directional
     a0 = PSD["zz"] / np.square(np.square(2 * np.pi * PSD["freq_space"]))
     
@@ -297,5 +323,14 @@ def bandedCalc(PSD: dict, Data: dict):
         "A2": (PSD["xx"] - PSD["yy"]) / denom,
         "B2": -2 * PSD["xy"].real / denom,
     }
+    index = a0.argmax()
+    
+    output["index"] = a0.argmax()
+    output["A1_sigg"] = output["A1"][index]
+    output["B1_sigg"] = output["B1"][index]
+    output["A2_sigg"] = output["A2"][index]
+    output["B2_sigg"] = output["B2"][index]
+
+   
     
     return output

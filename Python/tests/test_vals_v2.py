@@ -6,6 +6,7 @@
 
 from distutils.log import error
 from ftplib import error_perm
+from tkinter import E
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -16,11 +17,68 @@ import xarray as xr
 
 
 def process(args: ArgumentParser) -> None:
-
+   
     # normal
     Wave_xr = xr.open_dataset(args.nc[1], group="Wave")
     Wave_xr_Banded = xr.open_dataset(args.nc[0], group="Wave")
     Wave_xr_Welch = xr.open_dataset(args.nc[0], group="WelchWave")
+    # ###################################################
+    indices = Wave_xr_Banded.index.to_numpy()
+    index = np.nan
+    for i in indices:
+        if np.isnan(i):
+            pass
+        else:
+            index = int(i)
+    if np.isnan(index): 
+        print("error with index. All time windows failed")
+        exit(1) 
+
+    
+    bWave = {
+        "Hs": Wave_xr_Banded.Hs.to_numpy(),
+        "Ta": Wave_xr_Banded.Ta.to_numpy(),
+        "Tp": Wave_xr_Banded.Tp.to_numpy(),
+        "Tz": Wave_xr_Banded.Tz.to_numpy(),
+        "PeakPSD": Wave_xr_Banded.PeakPSD.to_numpy(),
+        "Dp": Wave_xr_Banded.Dp_true.to_numpy(), 
+        "A1_sigg": Wave_xr_Banded.A1_sigg.to_numpy(),
+        "B1_sigg": Wave_xr_Banded.B1_sigg.to_numpy(),
+        "A2_sigg": Wave_xr_Banded.A2_sigg.to_numpy(), 
+        "B2_sigg": Wave_xr_Banded.B2_sigg.to_numpy()
+    }
+    
+
+    wWave = {
+        "Hs": Wave_xr_Welch.Hs.to_numpy(),
+        "Ta": Wave_xr_Welch.Ta.to_numpy(),
+        "Tp": Wave_xr_Welch.Tp.to_numpy(),
+        "Tz": Wave_xr_Welch.Tz.to_numpy(),
+        "PeakPSD": Wave_xr_Welch.PeakPSD.to_numpy(),
+        "Dp": Wave_xr_Welch.Dp_true.to_numpy(),
+        "A1_sigg": Wave_xr_Welch.A1_sigg.to_numpy(),
+        "B1_sigg": Wave_xr_Welch.B1_sigg.to_numpy(),
+        "A2_sigg": Wave_xr_Welch.A2_sigg.to_numpy(), 
+        "B2_sigg": Wave_xr_Welch.B2_sigg.to_numpy()
+    }
+   
+
+    A1 = Wave_xr.A1.to_numpy()
+    B1 = Wave_xr.B1.to_numpy()
+    A2 = Wave_xr.A2.to_numpy()
+    B2 = Wave_xr.B2.to_numpy()
+
+    A1_sigg = []
+    B1_sigg = []
+    A2_sigg = []
+    B2_sigg = []
+
+    for i in range(len(A1)):
+        A1_sigg.append(A1[i][index])
+        B1_sigg.append(B1[i][index])
+        A2_sigg.append(A2[i][index])
+        B2_sigg.append(B2[i][index])
+   
 
     Wave = {
         "Hs": Wave_xr.Hs.to_numpy(),
@@ -28,32 +86,23 @@ def process(args: ArgumentParser) -> None:
         "Tp": Wave_xr.Tp.to_numpy(),
         "Tz": Wave_xr.Tz.to_numpy(),
         "PeakPSD": Wave_xr.PeakPSD.to_numpy(),
-        "Dp": Wave_xr.Dp.to_numpy()
+        "Dp": Wave_xr.Dp.to_numpy(),
+        "A1_sigg": np.asarray(A1_sigg),
+        "B1_sigg": np.asarray(B1_sigg),
+        "A2_sigg": np.asarray(A2_sigg), 
+        "B2_sigg": np.asarray(B2_sigg)
     }
-    bWave = {
-        "Hs": Wave_xr_Banded.Hs.to_numpy(),
-        "Ta": Wave_xr_Banded.Ta.to_numpy(),
-        "Tp": Wave_xr_Banded.Tp.to_numpy(),
-        "Tz": Wave_xr_Banded.Tz.to_numpy(),
-        "PeakPSD": Wave_xr_Banded.PeakPSD.to_numpy(),
-        "Dp": Wave_xr_Banded.Dp_true.to_numpy()
-    }
-    wWave = {
-        "Hs": Wave_xr_Welch.Hs.to_numpy(),
-        "Ta": Wave_xr_Welch.Ta.to_numpy(),
-        "Tp": Wave_xr_Welch.Tp.to_numpy(),
-        "Tz": Wave_xr_Welch.Tz.to_numpy(),
-        "PeakPSD": Wave_xr_Welch.PeakPSD.to_numpy(),
-        "Dp": Wave_xr_Welch.Dp_true.to_numpy()
-    }
+    
 
-    Bdiff_numerical = { "Hs": [], "Ta": [], "Tp": [], "Tz": [], "PeakPSD": [], "Dp": [] }
-    Bdiff_proportional = { "Hs": [], "Ta": [], "Tp": [], "Tz": [], "PeakPSD": [], "Dp": [] }
+    # ###################################################
 
-    Wdiff_numerical = { "Hs": [], "Ta": [], "Tp": [], "Tz": [], "PeakPSD": [], "Dp": [] }
-    Wdiff_proportional = { "Hs": [], "Ta": [], "Tp": [], "Tz": [], "PeakPSD": [], "Dp": [] }
+    Bdiff_numerical = { "Hs": [], "Ta": [], "Tp": [], "Tz": [], "PeakPSD": [], "Dp": [], "A1_sigg": [], "B1_sigg": [], "A2_sigg": [], "B2_sigg": []}
+    Bdiff_proportional = { "Hs": [], "Ta": [], "Tp": [], "Tz": [], "PeakPSD": [], "Dp": [], "A1_sigg": [], "B1_sigg": [], "A2_sigg": [], "B2_sigg": [] }
 
-    for j in Wave: 
+    Wdiff_numerical = { "Hs": [], "Ta": [], "Tp": [], "Tz": [], "PeakPSD": [], "Dp": [], "A1_sigg": [], "B1_sigg": [], "A2_sigg": [], "B2_sigg": [] }
+    Wdiff_proportional = { "Hs": [], "Ta": [], "Tp": [], "Tz": [], "PeakPSD": [], "Dp": [], "A1_sigg": [], "B1_sigg": [], "A2_sigg": [], "B2_sigg": [] }
+
+    for j in wWave: 
         # building X-axis
         error_count = 0
         for i in range(len(wWave[j])):
@@ -61,7 +110,7 @@ def process(args: ArgumentParser) -> None:
                 error_count += 1
                 
             else:
-                # hs
+
                 Bdiff_proportional[j].append((bWave[j][i] - Wave[j][i]) / bWave[j][i])
                 Bdiff_numerical[j].append(bWave[j][i] - Wave[j][i])
 
