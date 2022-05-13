@@ -59,7 +59,7 @@ def process(args: ArgumentParser) -> None:
         for i in range(len(wWave[j])):
             if np.isnan(wWave[j][i]):
                 error_count += 1
-                print(f"error on time window {i}")
+                
             else:
                 # hs
                 Bdiff_proportional[j].append((bWave[j][i] - Wave[j][i]) / bWave[j][i])
