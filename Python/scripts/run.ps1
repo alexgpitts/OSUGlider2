@@ -1,6 +1,6 @@
 # PI.ps1
 git clean -fx
-$file=".\ncFiles\067.20201225_1200.20201227_0400"
+$file=".\ncFiles\067.20201225_1200.20201225_1600"
 python .\csv_extractor.py --cdip $file".nc"
 python .\preprocessor.py --group=Meta --group=Wave --group=XYZ $file".nc"
 python .\Driver.py $file"_output.nc"
