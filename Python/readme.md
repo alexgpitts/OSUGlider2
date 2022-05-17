@@ -1,5 +1,5 @@
 # Ocean wave measurements (Python Implementation - On Shore)
-This is the python portion of our project. These programs serve as a data processing pipeline. 
+This is the python portion of our project. These programs serve as a data processing pipeline. This code is to process the raw acceleration data extracted from the Gliders SD card after recovery.
 
 ## Prerequisites 
 Python 3.9.12, numpy, pandas, matplotlib, xarray, pyyaml, and netCDF4 
