@@ -1,8 +1,13 @@
-#! /usr/bin/env python3
-#
-# A sample histogram for Alex Pitts
-#
-# May-2022, Pat Welch, pat@mousebrains.com
+"""
+Description: Compares all values with CDIP and displays comparison results in histograms for each value
+
+To compare: 
+    python .\tests\test_vals_v2.py "Your File.nc" "CDIPs file.nc"
+
+
+Author: Alex Pitts
+In collaboration with Pat Welch
+"""
 
 from distutils.log import error
 from ftplib import error_perm

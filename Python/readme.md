@@ -13,7 +13,7 @@ Python 3.9.12, numpy, pandas, matplotlib, xarray, and netCDF4
 
 `getdata.py` and `precessdata.py`: These two programs are helper functions for the Driver.py program. They have various functions reguarding extracting the data from the source .NC file and calculating all our coefficients<br />
 
-`tests\test_non_directional_values.py` and `tests\test_directional_values.py`: These two programs are testing functions for Driver.py's results. Given a .NC file from CDIP, and the resulting .NC file from Driver.py, we can compare our calculations with CDIP. <br />
+`tests\test_vals_v2.py` `tests\test_non_directional_values.py` and `tests\test_directional_values.py`: These two programs are testing functions for Driver.py's results. Given a .NC file from CDIP, and the resulting .NC file from Driver.py, we can compare our calculations with CDIP. <br />
 
 
 ## Tutorial:
