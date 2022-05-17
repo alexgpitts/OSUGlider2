@@ -29,8 +29,15 @@ Python 3.9.12, numpy, pandas, matplotlib, xarray, and netCDF4
 > python .\Driver.py ".\ncFiles\067.20201225_1200.20201225_1600_output.nc"
 
 4) Testing (Optional): <br />
+
+&nbsp;- Compare all calculations with CDIPs calculations, displaying the result in histograms<br /> 
+> python .\tests\test_vals_v2.py ".\ncFiles\067.20201225_1200.20201225_1600_output_processed.nc" ".\ncFiles\067.20201225_1200.20201225_1600.nc" <br />
+
 &nbsp;-Compare non-directional data of the fully processed file with CDIPs original file<br /> 
 > python .\tests\test_non_directional_values.py --graph ".\ncFiles\067.20201225_1200.20201225_1600_output_processed.nc" ".\ncFiles\067.20201225_1200.20201225_1600.nc"<br />
 
 &nbsp;-Compare directional spectra of the fully processed file with CDIPs original file<br /> 
 > python .\tests\test_directional_values.py --graph ".\ncFiles\067.20201225_1200.20201225_1600_output_processed.nc" ".\ncFiles\067.20201225_1200.20201225_1600.nc"<br />
+
+
+
