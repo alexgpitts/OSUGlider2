@@ -15,10 +15,7 @@ Index Rolling_mean(UZ window_size, Index s_r, Index t_r) {
 
 	Scan(ADD, s_r, t_r);
 
-	// for (Index c = COLS-window_size-1; c >= 1; c --) {
-	// 	Table[t_r][c+window_size] =
-	// 		Table[t_r][c+window_size] - Table[t_r][c];
-	// }
+
 	// crucial that c is signed here
 	for (I32 c = COLS-window_size-1; c >= 0; c --) {
 		if (c == 0) {
@@ -61,24 +58,10 @@ Index CalcPSD(
 	Index s_r_y, 
 	Index t_r
 ) {
-	//  "calculates the PSD on an output of a FFT"
-   //  nfft = xFFT.size
-   //  qOdd = nfft % 2
-   //  n = (nfft - qOdd) * 2  # Number of data points input to FFT
-   //  w = Bias(n, window)  # Get the window used
-   //  wSum = (w * w).sum()		// 1*1 ??
-   //  psd = (xFFT.conjugate() * yFFT) / (fs * wSum)
-   //  if not qOdd:       # Even number of FFT bins
-   //      psd[1:] *= 2   # Real FFT -> double for non-zero freq
-   //  else:              # last point unpaired in Nyquist freq
-   //      psd[1:-1] *= 2  # Real FFT -> double for non-zero freq
-   //  return psd
 
 	UZ n = COLS;
 	UZ wSum = COLS;
 
-
-	// ComplexMul(ComplexConj(s_r_x, t_r), s_r_y, t_r);
 	Scale((1. / (freq*wSum)),
 		ComplexMul(ComplexConj(s_r_x, t_r), s_r_y, t_r), t_r);
 
@@ -89,47 +72,10 @@ Index CalcPSD(
 	return t_r;
 }
 
-
-
-/*
-    a0 = PSD["zz"][1:] / \
-        np.square(np.square(2 * np.pi * PSD["freq_space"][1:]))
-    m0 = (a0 * PSD["freq_space"][1]).sum()
-    m1 = (a0*PSD["freq_space"][1:]*PSD["freq_space"][1]).sum()
-    mm1 = (a0/PSD["freq_space"][1:]*PSD["freq_space"][1]).sum()
-    te = mm1/m0  # mean energy period
-    m2 = (a0*np.square(PSD["freq_space"][1:]) * PSD["freq_space"][1]).sum()
-    tp = 1/PSD["freq_space"][1:][a0.argmax()]
-
-    # directional
-    denom = np.sqrt(PSD["zz"] * (PSD["xx"] + PSD["yy"]))
-    a1 = PSD["zx"].imag / denom
-    b1 = -PSD["zy"].imag / denom
-    denom = PSD["xx"] + PSD["yy"]
-    dp = np.arctan2(b1[a0.argmax()], a1[a0.argmax()])  # radians
-
-    output = {
-        "Hs": 4 * np.sqrt(m0),
-        "Ta": m0/m1,  # average period
-        "Tp": tp,  # peak wave period
-        "wave_energy_ratio": te/tp,
-        "Tz": np.sqrt(m0/m2),
-        "PeakPSD": a0.max(),
-        "Te": te,  # mean energy period
-        "Dp": np.arctan2(b1[a0.argmax()], a1[a0.argmax()]),
-        "Dp_mag": np.degrees(dp+Data["Meta"]["declination"]) % 360,
-        "Dp_true": np.degrees(dp) % 360,
-        "A1": a1,
-        "B1": b1,
-        "A2": (PSD["xx"] - PSD["yy"]) / denom,
-        "B2": -2 * PSD["xy"].real / denom,
-    }
-*/
-Index WaveCoeffients(float freq) {
+Index WaveCoefficients(float freq) {
 	// FreqSpace populates a row with F32 increments, but I need a
 	// freq space for C64, so by halving the frequency, things line up properly
 	Index freq_space = FreqSpace(freq*0.5, ROW(15));
-	// Inc(freq/COLS, freq_space, freq_space);
 
 	Index psd_xx = ROW(9);
 	Index psd_yy = ROW(10);
@@ -200,8 +146,7 @@ Index WaveCoeffients(float freq) {
 
 	Index denom_2 = Add(psd_xx, psd_yy, ROW(22));
 
-	// printf("a0_max_col %u\n", a0_max_coord.col-2);
-	// printf("a0_max_col %u\n", a0_max_coord.col);
+
 
 	// doesn't match python
 	Coord dp = ArcTanCell(

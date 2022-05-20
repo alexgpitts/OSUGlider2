@@ -1,8 +1,4 @@
 
-// #include "src/v1/array/data.h"
-// #include "src/v1/array/code.h"
-// #include "src/v1/array/meta.h"
-// #include "src/v1/driver.h"
 
 #include "src/v2/array/data.h"
 #include "src/v2/array/code.h"
@@ -10,74 +6,22 @@
 #include "src/v2/driver.h"
 
 
-// // .e r4 !! 1 + (*) // %%  (+) / 1 +
 
 int main(int argc, char const *argv[]) {
 
-	// Coord e =
-	// INC(1,
-	// 	FOLD(ADD,
-	// 		Reciprocal(
-	// 			Scan(MUL,
-	// 				Inc(1
-	// 				,	Iota(ROW(20))
-	// 				,	ROW(20))
-	// 			,	ROW(20))
-	// 		,	ROW(20))
-	// 	,	POS(0,20))
-	// ,	POS(0,20))
-	// ;
-	
-	// read_csv("./acc.csv");
+	// used for testing on desktop, replaced by ece implementation
 	read_csv("./067.20201225_1200.20201225_1600_xyz.csv");
 
-	// process("./067.20201225_1200.20201225_1600_xyz.csv", INPUT_MAX);
+
 	process(
-		INPUT_MAX,
-		Input[0],
-		Input[1],
-		Input[2],
-		1.2799999713897705
+		INPUT_MAX,				// length of input array
+		Input[0],				// x acceleration input array
+		Input[1],				// y acceleration input array
+		Input[2],				// z acceleration input array
+		1.2799999713897705	// frequency
 	);
 
-	print_table(20, 41);
+	// rows, colomns. determines the size of the data window viewable in console, not the size of the actual memory table (this is defined in v2/array/data.h)
+	print_table(20, 41);	
 	return 0;
 }
-
-// #define MEOW_FFT_IMPLEMENTATION
-// #include "src/v1/array/meow_fft.h"
-
-// #include <malloc.h>
-
-// int main(int argc, char** argv) {
-// 	// (void) argv;
-// 	// (void) argc;
-
-// 	unsigned          N    = 1024;
-// 	float*            in   = malloc(sizeof(float) * N);
-// 	Meow_FFT_Complex* out  = malloc(sizeof(Meow_FFT_Complex) * N);
-// 	Meow_FFT_Complex* temp = malloc(sizeof(Meow_FFT_Complex) * N);
-
-// 	// prepare data for "in" array.
-// 	// ...
-
-// 	size_t workset_bytes = meow_fft_generate_workset_real(N, NULL);
-// 	// Get size for a N point fft working on non-complex (real) data.
-
-// 	Meow_FFT_Workset_Real* fft_real =
-// 	(Meow_FFT_Workset_Real*) malloc(workset_bytes);
-
-// 	meow_fft_generate_workset_real(N, fft_real);
-
-// 	meow_fft_real(fft_real, in, out);
-// 	// out[0].r == out[0  ].r
-// 	// out[0].j == out[N/2].r
-
-// 	// meow_fft_real_i(fft_real, in, temp, out);
-// 	// result is not scaled, need to divide all values by N
-
-// 	free(fft_real);
-// 	free(out);
-// 	free(temp);
-// 	free(in);
-// }

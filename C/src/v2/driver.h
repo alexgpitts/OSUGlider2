@@ -1,19 +1,13 @@
 #pragma once
 
 #include "common.h"
-// #include "array/meow_fft.h"
 #include "array/code.h"
 #include "read_csv.h"
 #include "processdata.h"
 #include "array/FFT.h"
 
 
-// if you are using a differnt source to "Load" below, then you should define SOURCE_ARRAY_MAX_LENGTH to be equal to the max length of your input array instead of INPUT_MAX
 
-
-
-
-// void process(char* filename, UZ input_max) {
 void process(
 	UZ input_max,
 	F32* x_input,
@@ -21,20 +15,10 @@ void process(
 	F32* z_input,
 	F32 freq
 ) {
-	// read_csv(filename);
-
-
-	// F32 freq = 1.2799999713897705;
 
 	// make sure INPUT_MAX is greater than or equal to COLS
 	for (UZ i = 0; i <= (input_max-COLS); i += (COLS>>1)) {	// more to read
-		// printf("%lu\n", i+COLS);
 
-		// load x,y,z data
-		// change Input[0..2] to another source
-		// Load(Input[0], i, ROW(0));
-		// Load(Input[1], i, ROW(1));
-		// Load(Input[2], i, ROW(2));
 		Load(x_input, i, ROW(0));
 		Load(y_input, i, ROW(1));
 		Load(z_input, i, ROW(2));
@@ -71,7 +55,6 @@ void process(
 		// skip first row
 		// normalize
 		if (i) {
-		/// does this work?
 			Scale(0.5, ROW(9), ROW(9));
 			Scale(0.5, ROW(10), ROW(10));
 			Scale(0.5, ROW(11), ROW(11));
@@ -84,7 +67,7 @@ void process(
 	}
 
 
-	WaveCoeffients(freq);
+	WaveCoefficients(freq);
 
 	return;
 

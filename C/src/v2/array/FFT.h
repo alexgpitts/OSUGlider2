@@ -2,11 +2,7 @@
 // #include <complex>
 #pragma once
 #include "../common.h"
-// #define MAX 200
 
-// using namespace std;
-
-// #define M_PI 3.1415926535897932384
 
 /*function to calculate the log2(.) of int numbers*/
 // int log2(int N) {
@@ -96,32 +92,6 @@ C64 complex_pow(C64 A, F32 B) {
 }
 
 
-// void transform(C128* f, int N) {
-// 	ordina(f, N);    //first: reverse order
-// 	C128 *W;
-// 	W = (C128 *)malloc(N / 2 * sizeof(C128));
-// 	W[1] = polar(1., -2. * M_PI / N);
-// 	W[0] = (C128) { .real = 1, .imag = 0};
-// 	for(int i = 2; i < N / 2; i++) {
-// 		W[i] = complex_pow(W[1], i);
-// 	}
-// 	int n = 1;
-// 	int a = N / 2;
-// 	for(int j = 0; j < gcc_log2(N); j++) {
-// 		for(int i = 0; i < N; i++) {
-// 			if(!(i & n)) {
-// 				C128 temp = f[i];
-// 				// C128 Temp = W[(i * a) % (n * a)] * f[i + n];
-// 				C128 Temp = complex_mult(W[(i * a) % (n * a)], f[i + n]);
-// 				f[i] = complex_add(temp, Temp);
-// 				f[i + n] = complex_sub(temp, Temp);
-// 			}
-// 		}
-// 		n *= 2;
-// 		a = a / 2;
-// 	}
-// 	free(W);
-// }
 
 
 void transform(C64* f, C64*W, int N) {
@@ -147,21 +117,9 @@ void transform(C64* f, C64*W, int N) {
 		a = a / 2;
 	}
 
-	// fix missing complex val... I don't know why this works... soooo... :D
-	// printf(">> %d %f %f\n", N, f[0].real, f[N/2].real);
-	// f[0].imag = f[N/2].real;
 }
 
-// void FFT(C128* f, int N, double d) {
-// 	transform(f, N);
-// 	for(int i = 0; i < N; i++) {
-// 		// f[i] *= d; //multiplying by step
-// 		f[i] = (C128){
-// 			.real = f[i].real * d,
-// 			.imag = f[i].imag * d
-// 		}; //multiplying by step
-// 	}
-// }
+
 
 void lil_FFT(
 	C64* in,

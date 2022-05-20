@@ -1,7 +1,7 @@
 #pragma once
 
 #include "data.h"
-#include "meow_fft.h"
+// #include "meow_fft.h"
 #include "FFT.h"
 
 
@@ -44,7 +44,7 @@ Index Inc(F32 scalar, Index s_r, Index t_r) {
 	return t_r;
 }
 
-Coord INC(F32 scalar, Coord s, Coord t) {
+Coord IncCell(F32 scalar, Coord s, Coord t) {
 	Table[t.row][t.col] = scalar+Table[s.row][s.col];
 	return t;
 }
@@ -79,6 +79,13 @@ Index Sub(Index s_r_a, Index s_r_b, Index t_r) {
 Index Mul(Index s_r_a, Index s_r_b, Index t_r) {
 	for (Index c = 0; c < COLS; c++) {
 		Table[t_r][c] = Table[s_r_a][c]*Table[s_r_b][c];
+	}
+	return t_r;
+}
+
+Index Div(Index s_r_a, Index s_r_b, Index t_r) {
+	for (Index c = 0; c < COLS; c++) {
+		Table[t_r][c] = Table[s_r_a][c]/Table[s_r_b][c];
 	}
 	return t_r;
 }
@@ -162,12 +169,6 @@ Index Shift(I32 shift, Index s_r, Index t_r) {
 	return t_r;
 }
 
-Index Div(Index s_r_a, Index s_r_b, Index t_r) {
-	for (Index c = 0; c < COLS; c++) {
-		Table[t_r][c] = Table[s_r_a][c]/Table[s_r_b][c];
-	}
-	return t_r;
-}
 
 Index Sqrt(Index s_r, Index t_r) {
 	for (Index c = 0; c < COLS; c++) {
@@ -335,75 +336,6 @@ Coord FOLD(Op op, Index s_r, Coord t) {
 
 
 
-// float Mean(Index s_r) {
-// 	return Fold(ADD, s_r) / ((float)COLS);
-// }
-
-
-
-// float SampleStandardDeviation();
-
-
-
-Index meow_rFFT(Index s_r, Index t_r) {
-	
-
-	// Index Upper = Iota(ROW(0));
-	// Index Lower = Inc(1, ROW(1), ROW(1));
-
-	// Scale(1.0/0.0, Mean(Upper,Lower, ROW(2)), ROW(2));
-
-
-
-
-
-	unsigned          N    = COLS;
-	float*            in   = Table[s_r]; //malloc(sizeof(float) * N);
-	// Meow_FFT_Complex* out  = malloc(sizeof(Meow_FFT_Complex) * N);
-	Meow_FFT_Complex* temp = malloc(sizeof(Meow_FFT_Complex) * N);
-
-	// prepare data for "in" array.
-	// ...
-
-	size_t workset_bytes = meow_fft_generate_workset_real(N, NULL);
-
-	// printf("worksetbytes %lu\n", workset_bytes);
-	// Get size for a N point fft working on non-complex (real) data.
-
-	Meow_FFT_Workset_Real* fft_real = (Meow_FFT_Workset_Real*) malloc(workset_bytes);
-
-	meow_fft_generate_workset_real(N, fft_real);
-
-	// meow_fft_real(fft_real, in, out);
-	meow_fft_real(fft_real, in, (Meow_FFT_Complex*) Table[t_r]);
-
-	// don't ask...
-	((Meow_FFT_Complex*) Table[t_r])->j = 0;
-
-
-
-	// out[0].r == out[0  ].r
-	// out[0].j == out[N/2].r
-
-	// for (UZ i = 0; i < COLS/2; i ++) {
-	// 	printf("%f %f\n", out[i].r, out[i].j);
-	// }
-
-	// printf("%d\n", fft_real->half);
-
-	// meow_fft_real_i(fft_real, in, temp, out);
-	// result is not scaled, need to divide all values by N
-
-	free(fft_real);
-	// free(out);
-	free(temp);
-	// free(in);
-
-	return t_r;
-}
-
-
-
 
 Index ComplexConj(Index s_r, Index t_r) {
 
@@ -425,19 +357,6 @@ Index FreqSpace(float freq, Index t_r) {
 
 
 
-	// C64 H[COLS] = {0};
-	// C64 TMP[COLS] = {0};
-	// for (UZ i = 0; i < COLS; i++) {
-	// 	H[i].real = Table[5][i];
-	// }
-
-	// FFT(H, TMP, COLS);
-	// for (UZ i = 0; i < COLS/2; i++) {
-	// 	((C64*) Table[18])[i] = (C64) {
-	// 		.real = (float) H[i].real,
-	// 		.imag = (float) H[i].imag,
-	// 	};
-	// }
 
 
 Index FFT(Index s_r, Index t_r) {
@@ -477,51 +396,3 @@ Index Cos(Index s_r, Index t_r) {
 	return t_r;
 }
 
-
-// Index meow_rFFT(Index s_r, Index t_r) {
-	
-
-// 	// Index Upper = Iota(ROW(0));
-// 	// Index Lower = Inc(1, ROW(1), ROW(1));
-
-// 	// Scale(1.0/0.0, Mean(Upper,Lower, ROW(2)), ROW(2));
-
-
-
-
-
-// 	unsigned          N    = COLS;
-// 	float*            in   = Table[s_r]; //malloc(sizeof(float) * N);
-// 	Meow_FFT_Complex* out  = malloc(sizeof(Meow_FFT_Complex) * N);
-// 	Meow_FFT_Complex* temp = malloc(sizeof(Meow_FFT_Complex) * N);
-
-// 	// prepare data for "in" array.
-// 	// ...
-
-// 	size_t workset_bytes = meow_fft_generate_workset_real(N, NULL);
-// 	// Get size for a N point fft working on non-complex (real) data.
-
-// 	Meow_FFT_Workset_Real* fft_real = (Meow_FFT_Workset_Real*) malloc(workset_bytes);
-
-// 	meow_fft_generate_workset_real(N, fft_real);
-
-// 	meow_fft_real(fft_real, in, out);
-// 	// out[0].r == out[0  ].r
-// 	// out[0].j == out[N/2].r
-
-// 	for (UZ i = 0; i < COLS/2; i ++) {
-// 		printf("%f %f\n", out[i].r, out[i].j);
-// 	}
-
-// 	// printf("%d\n", fft_real->half);
-
-// 	// meow_fft_real_i(fft_real, in, temp, out);
-// 	// result is not scaled, need to divide all values by N
-
-// 	free(fft_real);
-// 	free(out);
-// 	free(temp);
-// 	// free(in);
-
-// 	return t_r;
-// }
