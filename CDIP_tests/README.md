@@ -1,6 +1,6 @@
 # Ocean wave measurements (CDIP Testing environment)
 
-This is legacy code our team used for research on how to calculate things from CDIP files. THe program takes in a CDIP .NC file and process it with various calculation methods.
+This is legacy code our team used for research on how to calculate things from CDIP files. THe program takes in a CDIP .NC file and process it with various calculation methods. To view the old github repo this code is extracted from can be found here: https://github.com/alexgpitts/OSUGlider
 
 This program needs numpy, matplotlib, netCDF4, and xarray installed to run. To display different graphs, change the plotting perimeter boolean values towards the top of the driver file.
 
