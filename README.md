@@ -1,8 +1,8 @@
 # Observing Ocean Wave Conditions Capstone Project (CS)
 
 ## Project Directories
-./Python: The python implementatino of our project for on shore calculations
-./C: The C implementatino of our project to be loaded onto an AUV glider module
+`./Python`: The python implementatino of our project for on shore calculations <br />
+`./C`: The C implementatino of our project to be loaded onto an AUV glider module <br />
 
 ## Overview: 
 
