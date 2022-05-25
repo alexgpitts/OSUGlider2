@@ -1,5 +1,9 @@
 # Observing Ocean Wave Conditions Capstone Project (CS)
 
+## Project Directories
+./Python: The python implementatino of our project for on shore calculations
+./C: The C implementatino of our project to be loaded onto an AUV glider module
+
 ## Overview: 
 
 The Glider Project is an ongoing research project conducted by Kipp Shearman, Pat Welch, and Kai-Fu Chang. The paramount goal of the glider project is to autonomously measure wave patterns and conditions via Autonomous Underwater Vehicle (AUV) gliders, then use this data to build polar plot spectrums for predictive and historical models. Data is already being collected via buoys, but there is no good way to measure wave data in the deep ocean. By incorporating the same technology on these buoys to ocean gliders, we can increase the number of data collection points in the ocean. This data can then be used by many industries. For example, commercial shipping, ship designers, and coastal engineers. 
