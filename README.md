@@ -14,7 +14,7 @@ The state of wave measurements is mainly reliant on fixed moorings. Fixed moorin
 
 ### Implementation:  
 
-The glider is already deployed for various other projects. Every few hours the glider surfaces to send its findings back to shore via satellite. The ECE team we are collaborating with implemented a module to be installed on these ocean gliders that will extract acceleration data while the glider floats on the surface. The raw acceleration data is recorded with the accelerometer implemented by the ECE team and saved to an SD card using their custom PCB. 
+Slocum gliders are already deployed for various other projects. Every few hours the glider surfaces to send its findings back to shore via satellite. The ECE team we are collaborating with implemented a module to be installed on these ocean gliders that will extract acceleration data while the glider floats on the surface. The raw acceleration data is recorded with the accelerometer implemented by the ECE team and saved to an SD card using their custom PCB. 
 
 The project involves 2 implementations of various calculations performed on acceleration data from ocean waves. We have an implementation in Python for onshore calculations and an implementation in C that will be loaded onto an AUV glider module.   
 
