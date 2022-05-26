@@ -1,3 +1,9 @@
+"""
+Finds a CSV file in current directory, parses it and stores it in nc file
+Author: Benjamin Cha
+"""
+
+
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt

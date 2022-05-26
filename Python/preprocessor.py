@@ -1,3 +1,8 @@
+"""
+Finds a CSV file in current directory, parses it and stores it in nc file
+Authors: Benjamin Cha, Alex Pitts
+"""
+
 from ast import parse
 from cgi import test
 import wave
@@ -11,9 +16,7 @@ import getdata as gd
 from argparse import ArgumentParser
 from getdata import Data, calcAcceleration, output
 
-"""
-Finds a CSV file in current directory, parses it and stores it in nc file
-"""
+
 
 def parse_csv(fn: str, output: str):
     if (not os.path.isfile(fn)): # if nc file isn't in current directory 
