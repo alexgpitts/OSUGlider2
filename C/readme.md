@@ -1,14 +1,3 @@
-<style type="text/css" rel="stylesheet">
-body {}
-p code, H2 code, H3 code, code {
-   font-weight: 500;
-   color: black !important;
-   background: rgb(240, 240, 240);
-}
-
-
-</style>
-
 
 # Ocean wave measurements (C Implementation - On Glider)
 
