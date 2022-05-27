@@ -2,8 +2,16 @@
 
 #include "../common.h"
 #include "data.h"
+/**
+ * meta.h defines functions for printing the contents of Table in a table-like format
+ * print_table is the interface function used in main
+ * does not do anything fancy to determine the width of your terminal window, so if
+ * it looks a mess, make your terminal window wider or WIDTH smaller
+ * output in MS Powershell is frunked up. Best use a unix terminal
+ */
 
 
+// Number of columns printed before moving to 'newline'
 #define WIDTH 10
 
 void print_val(Coord p);
@@ -28,6 +36,8 @@ void print_row(Index r) {
 	printf("│\n");
 }
 
+
+// prints the contents of 'Table' to stdin
 void print_table(Index max_cols, Index max_rows) {
 	for (Index k = 0; k < COLS && k < max_cols; k+=WIDTH) {
 		print_line2();

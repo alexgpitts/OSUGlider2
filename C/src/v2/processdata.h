@@ -15,7 +15,7 @@ Index Rolling_mean(UZ window_size, Index s_r, Index t_r) {
 
 	Scan(ADD, s_r, t_r);
 
-
+	// works backwards to avoid intermediate buffers
 	// crucial that c is signed here
 	for (I32 c = COLS-window_size-1; c >= 0; c --) {
 		if (c == 0) {
@@ -26,7 +26,8 @@ Index Rolling_mean(UZ window_size, Index s_r, Index t_r) {
 	}
 
 	Scale(1.0/((float) window_size), t_r, t_r);
-	// center
+
+	// center values and fill ends with 0s
 	Index hl = (window_size)/2;
 	Index hr = (window_size-1)/2;
 	for (Index c = hr; c < COLS; c++) {
@@ -42,6 +43,7 @@ Index Rolling_mean(UZ window_size, Index s_r, Index t_r) {
 }
 
 
+// Hann window bias
 // 0.5*(1 - np.cos( 2*np.pi*np.arange(width) / width ))
 Index Bias(Index t_r) {
 
@@ -77,10 +79,12 @@ Index WaveCoefficients(float freq) {
 	// freq space for C64, so by halving the frequency, things line up properly
 	Index freq_space = FreqSpace(freq*0.5, ROW(15));
 
+	// psds
 	Index psd_xx = ROW(9);
 	Index psd_yy = ROW(10);
 	Index psd_zz = ROW(11);
 
+	// csds
 	Index psd_xy = ROW(12);
 	Index psd_xz = ROW(13);
 	Index psd_yz = ROW(14);
