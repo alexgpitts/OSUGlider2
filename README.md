@@ -1,6 +1,6 @@
 # Observing Ocean Wave Conditions Capstone Project (CS)
 
-##Team
+## Team
 Alex Pitts, Benjamin Cha, Clayton Surgeon
 
 
