@@ -1,3 +1,15 @@
+<style type="text/css" rel="stylesheet">
+body {}
+p code, H2 code, H3 code, code {
+   font-weight: 500;
+   color: black !important;
+   background: rgb(240, 240, 240);
+}
+
+
+</style>
+
+
 # Ocean wave measurements (C Implementation - On Glider)
 
 
@@ -27,7 +39,11 @@ In much of the code you will see two helper macros `ROW` and `POS`. These are us
 \
 `ROW(x) => Index x`\
 `POS(x,y) => Coord { row = y, col = x }`
-\
+
+
+<div style="page-break-after: always;"></div>
+
+
 \
 Most functions have the interface:
 ```
@@ -60,6 +76,8 @@ Sub(
 ```
 *Every function in array is written such that the input source arrays are not mutated as a result of the operation.*
 
+<div style="page-break-after: always;"></div>
+
 ### Types
 You will see custom types sprinkled throughout the code base. They are defined in **`/src/v2/common.h`**. In addition to `Index` and `Coord` there are...
 ```
@@ -86,6 +104,9 @@ typedef size_t UZ;
 F32 Input[INPUTS][INPUT_MAX] = {0};
 ```
 `Input` was created for the CS team to mock the functionality described by the ECE team. That is, it is expected that the Glider will accumulate a large array of data points to an SD card. This data will them be read into memory. Due to the constraints of the gliders onboard CPU capabilities, this data is processes in chunks using the Welch method. The Input memory table is used for testing the C code locally on desktop computers, but is made redundant by the Input arrays provided by the ECE implementation.
+
+
+<div style="page-break-after: always;"></div>
 
 
 ## **File Tour**
@@ -118,6 +139,10 @@ print_table(max_columns, max_rows)
 \
 \
 `process` runs after read_csv. `process` includes operations that move data from the `Input` buffers described above into the main `Table` described above. `Table` is only operating on windows of data from `Input` buffer. The data read from `Input` is placed in rows 0, 1, 2 (x, y, z respectively). 
+
+<div style="page-break-after: always;"></div>
+
+
 ## **Table**
 To minimize memory use, rows are reused by intermediate operations.
 ```
@@ -292,7 +317,7 @@ static C64 data[COLS] = {0};
 for (UZ i = 0; i < COLS; i++) {
    data[i].real = Table[s_r][i];
 }
-lil_FFT(data, TMP, COLS);              <--------- lil_FFT called here
+lil_FFT(data, TMP, COLS);            <----- lil_FFT called here
 for (UZ i = 0; i < COLS/2; i++) {
    ((C64*) Table[t_r])[i] = data[i];
 }
@@ -303,6 +328,8 @@ for (UZ i = 0; i < COLS/2; i++) {
 
 `gcc_log2` is a custom log2 function that relies on GCC specific intrinsic. ARM CPUs have an O(1) operation called `clz` (count of leading zeros) that can be used to calculate integer log2.
 
+
+<div style="page-break-after: always;"></div>
 
 ### back to `code.h`
 ### **`Op`**
@@ -335,6 +362,10 @@ Index Scale(F32 scalar, Index s_r, Index t_r)
 Coord ScaleCell(F32 scalar, Coord s, Coord t)
 ```
 
+
+<div style="page-break-after: always;"></div>
+
+
 ### **`Inc`**
 `Inc` increments each cell in row `s_r` by `scalar` and places the result in row `t_r`
 ```
@@ -364,6 +395,9 @@ Index Add(Index s_r_a, Index s_r_b, Index t_r)
 ```
 Index Sub(Index s_r_a, Index s_r_b, Index t_r)
 ```
+
+<div style="page-break-after: always;"></div>
+
 
 ### **`Mul`**
 `Mul` zips two rows `s_r_a` and `s_r_b` with the multiplication operation and places the result in row `t_r`
@@ -425,6 +459,10 @@ Coord SqrtCell(Coord s, Coord t)
 float GetCell(Coord s)
 ```
 
+
+<div style="page-break-after: always;"></div>
+
+
 ### **`DivCell`**
 `DivCell` divides a single cell `s_a` by `s_b` and places the result in cell `t`
 ```
@@ -455,6 +493,8 @@ Coord ArcTanCell(Coord s_a, Coord s_b, Coord t)
 Coord MaxCoord (Index s_r)
 ```
 
+<div style="page-break-after: always;"></div>
+
 ### **`MaxCell`**
 `MaxCell` uses `MaxCoord` to locate the max cell in row `s_r` and places the value of that cell in cell `t`.
 ```
@@ -478,6 +518,8 @@ Coord RadToDegreeCell(Coord s, Coord t)
 ```
 Coord ModCell_immediate(Coord s, float mod, Coord t)
 ```
+
+<div style="page-break-after: always;"></div>
 
 ### **`Scan`**
 `Scan` performs one of 4 operations (ADD, SUB, MUL, DIV) `op` on row `s_r`. Scan performs an operation between two cells [n] and [n+1] in a row and places the result of the operation in [n+1], thus accumulating the result of the computation through the array. `Scan` places the result of this operation in row `t_r`.
@@ -503,6 +545,8 @@ Index ComplexConj(Index s_r, Index t_r)
 Index FreqSpace(float freq, Index t_r)
 ```
 
+<div style="page-break-after: always;"></div>
+
 ### **`Load`**
 `Load` moves data from a F32 buffer `input` into row `t_r`. `Load` reads from the input buffer starting at index `offset`. `Load` does not have any means of performing bounds checking on the input buffer, thus caller must ensure that the input buffer + offset is greater than or equal to the length `COLS`.
 ```
@@ -526,3 +570,7 @@ Run make in `/C` to compile the C code and run the resulting program
 ```
 make
 ```
+
+
+## Future
+- Users of this system may find it preferable to swap out the custom FFT implementation with an FFT driver provided by the microcontroller OEM if the microcontroller has a hardware supported FFT implementation.

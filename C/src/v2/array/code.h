@@ -1,8 +1,16 @@
 #pragma once
 
 #include "data.h"
-// #include "meow_fft.h"
 #include "FFT.h"
+
+
+
+/** array/code.h assumes access to global memory table 'Table' which is
+ * defined in array/data.h
+ * 
+ * the functionality of the operators and the general workflow they imply
+ * is explained in /C/readme.md
+ */
 
 
 
@@ -370,7 +378,7 @@ Index FFT(Index s_r, Index t_r) {
 	for (UZ i = 0; i < COLS; i++) {
 		data[i].real = Table[s_r][i];
 	}
-	lil_FFT(data, TMP, COLS);
+	lil_FFT(data, TMP, COLS);				// future: may be replaced with OEM driver
 	for (UZ i = 0; i < COLS/2; i++) {
 		((C64*) Table[t_r])[i] = data[i];
 	}

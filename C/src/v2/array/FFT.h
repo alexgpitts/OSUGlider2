@@ -1,8 +1,11 @@
-// #include <iostream>
-// #include <complex>
 #pragma once
 #include "../common.h"
 
+/**
+ * custom FFT implementation
+ * no dynamic memory allocation
+ * lil_fft is the interface function used by operator 'FFT' in array/code.h
+ */
 
 /*function to calculate the log2(.) of int numbers*/
 // int log2(int N) {
@@ -13,6 +16,8 @@
 //   }
 //   return i - 1;
 // }
+
+
 // GCC specific log2
 U32 gcc_log2(U32 n){
 	return (sizeof(U32)*8 - 1) - __builtin_clz(n);
@@ -120,7 +125,7 @@ void transform(C64* f, C64*W, int N) {
 }
 
 
-
+// interface function used by operator FFT defined in array/code.h
 void lil_FFT(
 	C64* in,
 	C64* tmp,
