@@ -1,5 +1,9 @@
 # Observing Ocean Wave Conditions Capstone Project (CS)
 
+##Team
+Alex Pitts, Benjamin Cha, Clayton Surgeon
+
+
 ## Project Directories
 `./Python`: The python implementation of our project for onshore calculations <br />
 `./C`: The C implementation of our project to be loaded onto an AUV glider module <br />
