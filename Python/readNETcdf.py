@@ -1,6 +1,6 @@
 
 """
-Description: Testing file to read a NETCDF file
+Description: Testing "sanbox" file to read a NETCDF file for testing during development
 
 to run: 
     python .\readNETcdf.py "your file.nc"

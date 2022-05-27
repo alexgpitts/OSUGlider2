@@ -24,7 +24,7 @@ def merge(data):
 
 
 def formatPSD(Data: dict)->dict:
-    """takes in an array of dictionaries and combines them into a dictionary of lists"""
+    """takes in an array of dictionaries for PSDs and combines them into a dictionary of lists"""
     wPSDxxs = []
     wPSDyys = []
     wPSDzzs = []
@@ -79,7 +79,7 @@ def formatPSD(Data: dict)->dict:
 
 
 def formatCalc(Data: dict)->dict:
-    """takes in an array of dictionaries and combines them into a dictionary of lists"""
+    """takes in an array of dictionaries of calculations and combines them into a dictionary of lists"""
     Hs = [] 
     Ta = []   
     Tp = []   
@@ -210,6 +210,7 @@ def calcPSD(xFFT: np.array, yFFT: np.array, fs: float, window: str) -> np.array:
     return psd
 
 def errorCalc(len: int) -> dict:
+    """function that fills a dictionary with error data in case we have an error"""
     output = {
         "Hs": np.NAN,
         "Ta": np.NAN,  # average period
@@ -234,6 +235,7 @@ def errorCalc(len: int) -> dict:
     return output
 
 def welchCalc(PSD: dict, Data: dict) -> dict:
+    """function that calculates all of our data from the Welch method. Stores the results in a dictionary"""
 
     # non directional
     a0 = PSD["zz"][1:] / np.square(np.square(2 * np.pi * PSD["freq_space"][1:]))
@@ -281,6 +283,7 @@ def welchCalc(PSD: dict, Data: dict) -> dict:
 
 
 def bandedCalc(PSD: dict, Data: dict):
+    """function that calculates all of our data from the Banded method. Stores the results in a dictionary"""
     
      # non directional
     a0 = PSD["zz"] / np.square(np.square(2 * np.pi * PSD["freq_space"]))
