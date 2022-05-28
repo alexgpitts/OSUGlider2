@@ -19,6 +19,7 @@ from getdata import Data, calcAcceleration, output
 
 
 def parse_csv(fn: str, output: str):
+    """parses the CSV file and returns a dataset containing the data"""
     if (not os.path.isfile(fn)): # if nc file isn't in current directory 
         raise Exception(f"Input CSV file, {fn}, not found!") # throw error if file isn't found
 
@@ -38,11 +39,9 @@ def parse_csv(fn: str, output: str):
     return xr.Dataset.from_dataframe(data) # format and stores csv file into dataset
      
 
-
-"""
-Finds CSV file to parse
-"""
 def store_data(args: ArgumentParser) -> None:
+    """stores the data into groups (Meta, Wave, and XYZ) to write to the netCDF file"""
+
     substring = "_output.nc"
     output_name = output(args, substring)
     # # if group is entered and csv file is found in the current directory, then parse that file
@@ -58,8 +57,6 @@ def store_data(args: ArgumentParser) -> None:
         TimeBounds = np.vstack((tlow, tup)).T
         
         wave["TimeBounds"] = xr.DataArray(data=TimeBounds, dims=["t", "bounds"])
-        
-
 
         #construct frequency bounds and bandwidth
         freq = parse_csv(args.freq, output_name)

@@ -26,7 +26,7 @@ def calcAcceleration(x: np.array, fs: float) -> np.array:
     return dx2 * fs * fs
 
 def Data(filename: str, cdip: bool) -> dict:
-    """Master data reading function. Reads the .nc file from CDIP.
+    """Master data reading function. Reads the .nc file.
     The data is stored in dictionary (data), which contains many dictionaries 
     to hold information. Examples include: acceleration data, frequency bounds, etc."""
    
@@ -66,7 +66,7 @@ def Data(filename: str, cdip: bool) -> dict:
     }
 
   
-
+    # if we are dealing with CDIP data, then convert from displacement to acceleration
     if cdip:
         data["XYZ"] = {
             "t": xyz_xr.t.to_numpy(),
@@ -75,6 +75,8 @@ def Data(filename: str, cdip: bool) -> dict:
             "z": calcAcceleration(xyz_xr.z.to_numpy(), frequency)
         }
         print("in CDIP")
+
+    # otherwise just read the acceleration data from the glider
     else:
         data["XYZ"] = {
             "t": xyz_xr.t.to_numpy(),
