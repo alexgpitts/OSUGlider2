@@ -552,7 +552,7 @@ Index Cos(Index s_r, Index t_r)
 ## Tutorial:
 Run python program to generate CSV file from CDIP data
 ```
-python ./Driver.py "./ncFiles/067.20201225_1200.20201225_1600_output.nc"
+python  ./csv_extractor.py --cdip  ./ncFiles/067.20201225_1200.20201225_1600.nc
 ```
 
 Run make in `/C` to compile the C code and run the resulting program
