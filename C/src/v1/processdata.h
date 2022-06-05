@@ -22,7 +22,7 @@ Index Rolling_mean(UZ window_size, Index s_r, Index t_r) {
 	// crucial that c is signed here
 	for (I32 c = COLS-window_size-1; c >= 0; c --) {
 		if (c == 0) {
-			printf("%g %g\n", Table[t_r][c+window_size], Table[t_r][c]);
+			// printf("%g %g\n", Table[t_r][c+window_size], Table[t_r][c]);
 		}
 		Table[t_r][c+window_size] =
 			Table[t_r][c+window_size] - Table[t_r][c];

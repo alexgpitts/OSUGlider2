@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define M_PI 3.1415926535897932384
 
@@ -75,9 +76,9 @@ Index UPPER_ROUND(UZ num, UZ base) {
 }
 
 
-
+// These macros may seem pointless, but they help annotate the code where they are used
 #define ROW(x) (x)
-// #define COL(x) (x)
+
 #define POS(x,y) ((Coord) { .col = x, .row = y })
 
 #define mXYZ(a,b,c) ((XYZ) { .x = a, .y = b, .z = c })

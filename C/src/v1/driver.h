@@ -7,14 +7,21 @@
 #include "processdata.h"
 #include "array/FFT.h"
 
-void process(char* filename) {
-	read_csv(filename);
+void process(
+	UZ input_max,
+	F32* x_input,
+	F32* y_input,
+	F32* z_input,
+	F32 freq
+) {
 
+	// timespace is never actually used
 	Index timespace = ROW(0);
-	// Scale(0.781250024, Iota(timespace), timespace);
-
-	F32 freq = 1.2799999713897705;
 	Scale(freq, Iota(timespace), timespace);
+
+	Load(x_input, 0, ROW(1));
+	Load(y_input, 0, ROW(2));
+	Load(z_input, 0, ROW(3));
 
 	Index t = ROW(0);
 	Index x = ROW(1);
@@ -25,12 +32,6 @@ void process(char* filename) {
 	Rolling_mean(2, ROW(2), ROW(6));
 	Rolling_mean(2, ROW(3), ROW(7));
 
-	// return;
-
-	// should be regular fft
-	// Index x_fft = meow_rFFT(ROW(5), ROW(9));
-	// Index y_fft = meow_rFFT(ROW(6), ROW(10));
-	// Index z_fft = meow_rFFT(ROW(7), ROW(11));
 
 	Index x_fft = FFT(ROW(5), ROW(9));
 	Index y_fft = FFT(ROW(6), ROW(10));
@@ -46,12 +47,6 @@ void process(char* filename) {
 	CalcPSD(freq, x_fft, z_fft, ROW(17));
 	CalcPSD(freq, y_fft, z_fft, ROW(18));
 
-	// CalcPSD(20, x_fft, y_fft, ROW(16));
-	// CalcPSD(20, x_fft, z_fft, ROW(17));
-	// CalcPSD(20, y_fft, z_fft, ROW(18));
-
-	// Index freq_space = FreqSpace(freq, ROW(20));
-	// Index a0 = 
 
 	WaveCoeffients(freq);
 }

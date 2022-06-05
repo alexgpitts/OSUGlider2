@@ -4,6 +4,10 @@
 > src/v1 was tested more thoroughly\
 > src/v2 uses the welch method to address memory constraints
 
+> **Note**\
+> this version of readme is a copy of the v2 readme in the main C implementation directory.\
+> this version contains the v1 memory table map
+
 ## Prerequisites 
 Assumes GCC compiler\
 Make runs with C11
@@ -139,70 +143,47 @@ To minimize memory use, rows are reused by intermediate operations.
 ```
 TABLE
 
-Row  0 ← Raw X acceleration data
-Row  0 ← Rolling mean of X acceleration data
-Row  0 ← Biased with Hann window
-Row  0 ← FFT(X), FFT of Row 0
-
-Row  1 ← Raw Y acceleration data
-Row  1 ← Rolling mean of Y acceleration data
-Row  1 ← Biased with Hann window
-Row  1 ← FFT(Y), FFT of Row 1
-
-Row  2 ← Raw Z acceleration data
-Row  2 ← Rolling mean of Z acceleration data
-Row  2 ← Biased with Hann window
-Row  2 ← FFT(Z), FFT of Row 2
-
-
-Row  3 ← PSD(X, X), PSD of Row  0 and Row  0
-Row  4 ← PSD(Y, Y), PSD of Row  1 and Row  1
-Row  5 ← PSD(Z, Z), PSD of Row  2 and Row  2
-
-Row  6 ← PSD(X, Y), PSD of Row  0 and Row  1
-Row  7 ← PSD(X, Z), PSD of Row  0 and Row  2
-Row  8 ← PSD(Y, Z), PSD of Row  1 and Row  2
-
-// The Welch method sees the PSD performed on successive 
-// overlapping windows of the input data
-Row  9 ← Accumulator for PSD XX
-Row 10 ← Accumulator for PSD YY
-Row 11 ← Accumulator for PSD ZZ
-
-Row 12 ← Accumulator for PSD XY
-Row 13 ← Accumulator for PSD XZ
-Row 14 ← Accumulator for PSD YZ
-
-
-// Wave Coefficients
-Row 15 ← Frequency Space
-Row 16 ← Scalar Coefficients
-Row 17 ← a0
-Row 18 ← Temporary Row for intermediate calculations
-
-Pos 0,16 ← m0
-Pos 1,16 ← m1
-Pos 2,16 ← mm1
-Pos 3,16 ← te
-Pos 4,16 ← m2
-Pos 5,16 ← tp
-
-Row 19 ← denom (denominator)
-Row 20 ← a1
-Row 21 ← b1
-
-Row 22 ← denom2 (denominator 2)
-
-Pos  6,16 ← dp
-Pos  7,16 ← Hs
-Pos  8,16 ← Ta
-Pos  9,16 ← wave energy ratio
-Pos 10,16 ← Tz
-Pos 11,16 ← PeakPSD
-Pos 12,16 ← dp true
-
-Row 22 ← A2
-Row 23 ← B2
+Row  0 ← Time Series
+Row  1 ← X acceleration data
+Row  2 ← Y acceleration data
+Row  3 ← Z acceleration data
+Row  4 ← Nothing
+Row  5 ← Rolling mean of X acceleration data
+Row  6 ← Rolling mean of Y acceleration data
+Row  7 ← Rolling mean of Z acceleration data
+Row  8 ← Nothing
+Row  9 ← FFT(X), FFT of Row 5
+Row 10 ← FFT(Y), FFT of Row 6
+Row 11 ← FFT(Z), FFT of Row 7
+Row 12 ← Nothing
+Row 13 ← PSD(X, X), PSD of Row 9  and Row  9
+Row 14 ← FFT(Y, Y), PSD of Row 10 and Row 10
+Row 15 ← FFT(Z, Z), PSD of Row 11 and Row 11
+Row 16 ← FFT(X, Y), PSD of Row  9 and Row 10
+Row 17 ← FFT(X, Z), PSD of Row  9 and Row 11
+Row 18 ← FFT(Y, Z), PSD of Row 10 and Row 11
+Row 19 ← Nothing
+Row 20 ← Frequency Space
+Row 21 ← a0
+Pos 0,22 ← m0
+Pos 0,23 ← m1
+Pos 0,24 ← mm1
+Pos 0,25 ← te
+Pos 0,26 ← m2
+Pos 0,27 ← tp
+Row 28 ← denom (denominator)
+Row 29 ← a1
+Row 30 ← b1
+Row 31 ← denom2 (denominator 2)
+Pos 0,32 ← dp
+Pos 0,33 ← Hs
+Pos 0,34 ← Ta
+Pos 0,35 ← wave energy ratio
+Pos 0,36 ← Tz
+Pos 0,37 ← PeakPSD
+Pos 0,38 ← dp true
+Row 39 ← A2
+Row 40 ← B2
 ```
 ## `driver.h`
 `Process` is defined in **`/src/v2/driver.h`**
@@ -217,14 +198,14 @@ void process(
 ```
 As mentioned in the description of `main`, process expects 3 pointers to 3 memory buffers (x, y, z raw acceleration data). As well as the logical length of these input buffers `input_max`. `input_max` is the length of each input buffer, not the combined length of all input buffers. freq is the sampling frequency, for example: 1.5 corresponds to 1.5 Hz.
 
-`process` performs the following calculations to get the PSD using the welch method
-   1. Load a window of raw acceleration data from input arrays into `Table`
+`process` performs the following calculations to get the PSD
+   1. Load raw acceleration data from input arrays into `Table`
    2. Perform rolling mean on raw acceleration data
    3. Bias (hann) the window of data
    4. Calculate the X,Y,Z FFTs
    5. Calculate the XX, YY, ZZ, XY, XZ, YZ PSDs from the FFTs
 
-Once all the data is processed, the welch PSD is used by the `WaveCoefficients` function which is called at the end of `process`
+Once all the data is processed, the PSD is used by the `WaveCoefficients` function which is called at the end of `process`
 
 ## `processdata.h`
 
@@ -259,7 +240,7 @@ Index WaveCoefficients(float freq)
 `data.h` is a fairly short file, but it controls the size of the program memory.
 `data.h` was largely addressed in the section 'Basics', I will reiterate here. `Table` is a rectangular array of floats. `Table` is used for both arrays of real 32-floats, and  arrays of 64-bit complex floats (32 bit real part, 32 bit imag part).
 
-`POW_OF_2` determines the width of the welch window. This window must be a power of 2 and must be less than or equal to INPUT_MAX.
+`POW_OF_2` determines the width of `Table`, COLS, and INPUT_MAX.
 
 `Input` is a 3 row buffer for the raw x, y, z acceleration data.
 ```
@@ -273,7 +254,7 @@ F32 Table[ROWS][COLS] = {0};
 ```
 #define INPUTS 3
 // used by process function
-#define INPUT_MAX (1<<12)
+#define INPUT_MAX COLS
 F32 Input[INPUTS][INPUT_MAX] = {0};
 ```
 

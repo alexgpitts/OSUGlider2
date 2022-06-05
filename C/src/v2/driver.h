@@ -50,21 +50,18 @@ void process(
 
 		Add(ROW(6), ROW(12), ROW(12));
 		Add(ROW(7), ROW(13), ROW(13));
-		Add(ROW(8), ROW(14), ROW(14));
-
-		// skip first row
-		// normalize
-		if (i) {
-			Scale(0.5, ROW(9), ROW(9));
-			Scale(0.5, ROW(10), ROW(10));
-			Scale(0.5, ROW(11), ROW(11));
-
-			Scale(0.5, ROW(12), ROW(12));
-			Scale(0.5, ROW(13), ROW(13));
-			Scale(0.5, ROW(14), ROW(14));
-		}
-			
+		Add(ROW(8), ROW(14), ROW(14));			
 	}
+
+	// average the accumulated result
+	F32 number_of_windows = (F32) input_max / (F32) COLS;
+	Scale(number_of_windows, ROW(9), ROW(9));
+	Scale(number_of_windows, ROW(10), ROW(10));
+	Scale(number_of_windows, ROW(11), ROW(11));
+
+	Scale(number_of_windows, ROW(12), ROW(12));
+	Scale(number_of_windows, ROW(13), ROW(13));
+	Scale(number_of_windows, ROW(14), ROW(14));
 
 
 	WaveCoefficients(freq);
