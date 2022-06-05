@@ -2,6 +2,5 @@
 *.csv
 *_output.nc
 *_processed.nc
-__pycache__/
-Python/__pycache__/
+*__pycache__*
 
